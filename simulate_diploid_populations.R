@@ -96,5 +96,5 @@ system.time(
 
 x11()
 par(bg="gray")
-image(dat.back[,names(bins)])
+image(dat.back[,names(bins)], col=c(2,3,4))
  
