@@ -35,41 +35,41 @@ sim.ch.f2<-function(n.ind, n.mrk, ch.len)
     }
 
 ##Find clusters
-find.bins<-function(dat, n.cpus, exact=FALSE)
+find.bins<-function(w, n.cpus, exact=FALSE)
     {
-        n.mrk<-nrow(dat)
+        n.mrk<-ncol(w)
         cl <- makeCluster(n.cpus)
         on.exit(stopCluster(cl))
-        mis<-parCapply(cl, dat, function(x) sum(is.na(x)))
+        mis<-parCapply(cl, w, function(x) sum(is.na(x)))
         bins<-vector("list", 1)
         bt.mrk<-character()
         count<-1
-        while(length(ncol(dat)) > 0)
+        while(length(ncol(w)) > 0 && ncol(w) > 0)
             {
-                cat("\n bin number: ", count, " --- remaining markers:", ncol(dat))
-                a<-dat[,1]
+                cat("\n bin number: ", count, " --- remaining markers:", ncol(w))
+                a<-w[,1]
                 clusterExport(cl,"a")
-                mrk.a<-colnames(dat)[1]
-                if(class(dat[,-1])=="numeric")
+                mrk.a<-colnames(w)[1]
+                if(class(w[,-1])=="numeric")
                     {
-                        M<-matrix(dat[,-1], nrow = n.mrk)
+                        M<-matrix(w[,-1], nrow = n.mrk)
                         if(exact)
-                            aa <- apply(M, 2, function(x) identical(x,a))
+                            aa <- apply(M, 2, function(x,a) identical(x,a), a=a)
                         else
-                            aa <- apply(M, 2, function(x) all(x==a, na.rm=TRUE))
+                            aa <- apply(M, 2, function(x,a) all(x==a, na.rm=TRUE), a=a)
                     }
                 else
                     {
                         if(exact)
-                            aa <- parCapply(cl, dat[,-1], function(x) identical(x,a))
+                            aa <- parCapply(cl, w[,-1], function(x,a) identical(x,a), a=a)
                         else
-                            aa <- parCapply(cl, dat[,-1], function(x) all(x==a, na.rm=TRUE))
+                            aa <- parCapply(cl, w[,-1], function(x,a) all(x==a, na.rm=TRUE), a=a)
                     }
                 bins[[count]]<-mis[c(mrk.a,names(which(aa)))]
                 bt.mrk[count]<-names(which.min(bins[[count]]))
-                b<-match(names(bins[[count]]), colnames(dat))
+                b<-match(names(bins[[count]]), colnames(w))
                 count=count+1
-                dat<-dat[,-b]
+                w<-w[,-b]
             }
         names(bins)<-bt.mrk
         bins
@@ -77,14 +77,14 @@ find.bins<-function(dat, n.cpus, exact=FALSE)
 
 
 
-ch.len<-200
-n.mrk<-10000
+ch.len<-20
+n.mrk<-1000
 r<-mf.k(ch.len/n.mrk)
 n.ind<-100
 dat<-sim.ch.f2(n.ind, n.mrk, ch.len)
 dat[sample(1:length(dat), length(dat)*.05)]<-NA
 colnames(dat)<-paste("M", 1:n.mrk, sep="")
-dat<-dat[,sample(1:n.mrk)]
+#dat<-dat[,sample(1:n.mrk)]
 
 dat.back<-dat
 par(bg="gray")
