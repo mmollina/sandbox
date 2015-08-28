@@ -44,20 +44,27 @@ find.bins<-function(dat, n.cpus, exact=FALSE)
         bins<-vector("list", 1)
         bt.mrk<-character()
         count<-1
-        while(ncol(dat) > 0)
+        while(length(ncol(dat)) > 0)
             {
                 cat("\n bin number: ", count, " --- remaining markers:", ncol(dat))
                 a<-dat[,1]
                 clusterExport(cl,"a")
                 mrk.a<-colnames(dat)[1]
                 if(class(dat[,-1])=="numeric")
-                    M<-matrix(dat[,-1], nrow = n.mrk)
+                    {
+                        M<-matrix(dat[,-1], nrow = n.mrk)
+                        if(exact)
+                            aa <- apply(M, 2, function(x) identical(x,a))
+                        else
+                            aa <- apply(M, 2, function(x) all(x==a, na.rm=TRUE))
+                    }
                 else
-                    M<-dat[,-1]
-                if(exact)
-                    aa <- parCapply(cl, M, function(x) identical(x,a))
-                else
-                    aa <- parCapply(cl, M, function(x) all(x==a, na.rm=TRUE))
+                    {
+                        if(exact)
+                            aa <- parCapply(cl, dat[,-1], function(x) identical(x,a))
+                        else
+                            aa <- parCapply(cl, dat[,-1], function(x) all(x==a, na.rm=TRUE))
+                    }
                 bins[[count]]<-mis[c(mrk.a,names(which(aa)))]
                 bt.mrk[count]<-names(which.min(bins[[count]]))
                 b<-match(names(bins[[count]]), colnames(dat))
