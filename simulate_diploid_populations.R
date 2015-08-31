@@ -48,7 +48,7 @@ find.bins<-function(w, n.cpus, exact=FALSE)
             {
                 cat("\n bin number: ", count, " --- remaining markers:", ncol(w))
                 a<-w[,1]
-                clusterExport(cl,"a")
+                #clusterExport(cl,"a")
                 mrk.a<-colnames(w)[1]
                 if(class(w[,-1])=="numeric")
                     {
@@ -77,24 +77,27 @@ find.bins<-function(w, n.cpus, exact=FALSE)
 
 
 
-ch.len<-20
-n.mrk<-1000
+ch.len<-3000
+n.mrk<-100000
 r<-mf.k(ch.len/n.mrk)
-n.ind<-100
+n.ind<-1000
 dat<-sim.ch.f2(n.ind, n.mrk, ch.len)
 dat[sample(1:length(dat), length(dat)*.05)]<-NA
 colnames(dat)<-paste("M", 1:n.mrk, sep="")
 #dat<-dat[,sample(1:n.mrk)]
 
+
 dat.back<-dat
+pdf("no_bins.pdf")
 par(bg="gray")
 image(dat.back, col=c(2,3,4))
+dev.off()
 
-system.time(
-    bins<-find.bins(dat, n.cpus=4, exact=FALSE)
-    )
+system.time(bins<-find.bins(dat, n.cpus=4, exact=FALSE))
 
-x11()
+pdf("bins.pdf")
 par(bg="gray")
 image(dat.back[,names(bins)], col=c(2,3,4))
- 
+dev.off()
+
+save.image("bins.RData")
