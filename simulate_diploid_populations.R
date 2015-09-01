@@ -1,6 +1,4 @@
 require(snow)
-
-##Rcpp example
 library(Rcpp)
 library(inline)
 
@@ -147,6 +145,7 @@ find.bins.fast<-function(w, n.cpus, exact=FALSE)
             {
                 #cat("\n bin number: ", count, " --- remaining markers:", ncol(w.temp))
                 cat(".")
+                if(count%%50==0) cat("\n")
                 if(exact)
                     aa <-comp.vec(w.temp, 1)
                 else
@@ -159,21 +158,24 @@ find.bins.fast<-function(w, n.cpus, exact=FALSE)
                 mis<-mis[-(aa+1)]
             }
         names(bins)<-bt.mrk
+        cat("\n")
         bins
     }
 
 
 
 
-ch.len<-300
-n.mrk<-10000
+ch.len<-3000
+n.mrk<-250000
 r<-mf.k(ch.len/n.mrk)
-n.ind<-100
+n.ind<-2000
 dat<-sim.ch.f2(n.ind, n.mrk, ch.len)
 dat<-dat+1
 dat[sample(1:length(dat), length(dat)*.05)]<-NA
 colnames(dat)<-paste("M", 1:n.mrk, sep="")
 dat<-dat[,sample(1:n.mrk)]
+save.image("big_example_250000_mrk_2000_ind.RData")
+
 
 dat.back<-dat
 pdf("no_bins.pdf")
