@@ -1,4 +1,56 @@
 require(snow)
+
+##Rcpp example
+library(Rcpp)
+library(inline)
+
+code <- '
+Rcpp::NumericMatrix geno(genoR);
+int exact = Rcpp::as<int>(exactR);
+std::vector<int> v(1);
+int n_mar = geno.ncol();
+int n_ind = geno.nrow();
+if(exact==1)
+  {
+    for(int i = 1; i < n_mar; i++)
+      {
+	int flag=0;
+	for(int j = 0; j < n_ind; j++)
+	  {
+	    if(geno(j,0)!=geno(j,i))
+	      {
+		flag=1;
+		break;
+	      }
+	  }
+	if(flag==0)
+	  v.push_back(i);
+      }
+  }
+ else
+  {
+    for(int i = 1; i < n_mar; i++)
+      {
+	int flag=0;
+	for(int j = 0; j < n_ind; j++)
+	  {
+	    if(geno(j,0)!=geno(j,i) && geno(j,0)!=0 && geno(j,i)!=0)
+	      {
+		flag=1;
+		break;
+	      }
+	  }
+	if(flag==0)
+	  v.push_back(i);
+      }
+  }
+return(wrap(v));
+'
+
+comp.vec <- cxxfunction(signature(genoR="numeric", exactR="numeric"),
+                         plugin="Rcpp",
+                         body=code)
+
 ##Kosambi mapping function
 mf.k<-function (d) 
     0.5 * tanh(d/50)
@@ -37,22 +89,23 @@ sim.ch.f2<-function(n.ind, n.mrk, ch.len)
 ##Find clusters
 find.bins<-function(w, n.cpus, exact=FALSE)
     {
-        n.mrk<-ncol(w)
+        w.temp<-w
+        n.mrk<-ncol(w.temp)
         cl <- makeCluster(n.cpus)
         on.exit(stopCluster(cl))
-        mis<-parCapply(cl, w, function(x) sum(is.na(x)))
+        mis<-parCapply(cl, w.temp, function(x) sum(is.na(x)))
         bins<-vector("list", 1)
         bt.mrk<-character()
         count<-1
-        while(length(ncol(w)) > 0 && ncol(w) > 0)
+        while(length(ncol(w.temp)) > 0 && ncol(w.temp) > 0)
             {
-                cat("\n bin number: ", count, " --- remaining markers:", ncol(w))
-                a<-w[,1]
+                cat("\n bin number: ", count " --- remaining markers:", ncol(w.temp))
+                a<-w.temp[,1]
                 #clusterExport(cl,"a")
-                mrk.a<-colnames(w)[1]
-                if(class(w[,-1])=="numeric")
+                mrk.a<-colnames(w.temp)[1]
+                if(class(w.temp[,-1])=="numeric")
                     {
-                        M<-matrix(w[,-1], nrow = n.mrk)
+                        M<-matrix(w.temp[,-1], nrow = n.mrk)
                         if(exact)
                             aa <- apply(M, 2, function(x,a) identical(x,a), a=a)
                         else
@@ -61,15 +114,16 @@ find.bins<-function(w, n.cpus, exact=FALSE)
                 else
                     {
                         if(exact)
-                            aa <- parCapply(cl, w[,-1], function(x,a) identical(x,a), a=a)
+                            aa <- parCapply(cl, w.temp[,-1], function(x,a) identical(x,a), a=a)
                         else
-                            aa <- parCapply(cl, w[,-1], function(x,a) all(x==a, na.rm=TRUE), a=a)
+                            aa <- parCapply(cl, w.temp[,-1], function(x,a) all(x==a, na.rm=TRUE), a=a)
                     }
                 bins[[count]]<-mis[c(mrk.a,names(which(aa)))]
                 bt.mrk[count]<-names(which.min(bins[[count]]))
-                b<-match(names(bins[[count]]), colnames(w))
+                b<-match(names(bins[[count]]), colnames(w.temp))
                 count=count+1
-                w<-w[,-b]
+                #print(-b)
+                w.temp<-w.temp[,-b]
             }
         names(bins)<-bt.mrk
         bins
@@ -77,15 +131,49 @@ find.bins<-function(w, n.cpus, exact=FALSE)
 
 
 
-ch.len<-3000
-n.mrk<-100000
+##Find clusters
+find.bins.fast<-function(w, n.cpus, exact=FALSE)
+    {
+        w.temp<-w
+        n.mrk<-ncol(w.temp)
+        #cl <- makeCluster(n.cpus)
+        ##on.exit(stopCluster(cl))
+        mis<-apply(w.temp, 2, function(x) sum(x==0))
+        #stopCluster(cl)
+        bins<-vector("list", 1)
+        bt.mrk<-character()
+        count<-1
+        while(length(ncol(w.temp)) > 0 && ncol(w.temp) > 0)
+            {
+                #cat("\n bin number: ", count, " --- remaining markers:", ncol(w.temp))
+                cat(".")
+                if(exact)
+                    aa <-comp.vec(w.temp, 1)
+                else
+                    aa <-comp.vec(w.temp, 0)
+                bins[[count]]<-mis[aa+1]
+                bt.mrk[count]<-names(which.min(bins[[count]]))
+                count=count+1
+                #print(-(aa+1))
+                w.temp<-w.temp[,-(aa+1)]
+                mis<-mis[-(aa+1)]
+            }
+        names(bins)<-bt.mrk
+        bins
+    }
+
+
+
+
+ch.len<-300
+n.mrk<-10000
 r<-mf.k(ch.len/n.mrk)
-n.ind<-1000
+n.ind<-100
 dat<-sim.ch.f2(n.ind, n.mrk, ch.len)
+dat<-dat+1
 dat[sample(1:length(dat), length(dat)*.05)]<-NA
 colnames(dat)<-paste("M", 1:n.mrk, sep="")
-#dat<-dat[,sample(1:n.mrk)]
-
+dat<-dat[,sample(1:n.mrk)]
 
 dat.back<-dat
 pdf("no_bins.pdf")
@@ -93,11 +181,21 @@ par(bg="gray")
 image(dat.back, col=c(2,3,4))
 dev.off()
 
-system.time(bins<-find.bins(dat, n.cpus=4, exact=FALSE))
-
-pdf("bins.pdf")
+system.time(bins.slow<-find.bins(dat, n.cpus=4, exact=FALSE))
+pdf("bins.slow.pdf")
 par(bg="gray")
-image(dat.back[,names(bins)], col=c(2,3,4))
+image(dat.back[,sort(names(bins.slow))], col=c(2,3,4))
+dev.off()
+
+
+dat[is.na(dat)]<-0
+system.time(bins.fast<-find.bins.fast(dat, n.cpus=4, exact=FALSE))
+pdf("bins.fast.pdf")
+par(bg="gray")
+image(dat.back[,sort(names(bins.fast))], col=c(2,3,4))
 dev.off()
 
 save.image("bins.RData")
+
+
+
