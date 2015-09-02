@@ -1,0 +1,11 @@
+# Lines starting with '#' are considered comments.
+# Ignore (generated) RData and Rout files,
+*.RData
+*.Rout
+*.Rhistory
+*~
+*#
+# except foo.html which is maintained by hand.
+#!foo.RData
+# Ignore objects and archives.
+#*.[oa]
