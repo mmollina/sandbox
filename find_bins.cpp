@@ -43,10 +43,6 @@ IntegerVector getbins(IntegerMatrix geno){
 	    b[i] = *std::max_element(b_vec.begin(), b_vec.end())+1;
 	    b_vec.push_back(b[i]);
 	  }
-	Rcpp::Rcout.precision(2);
-	Rcpp::Rcout << std::fixed << 100.0*i/n_mar << " ";
-	if(i % 20 == 0)
-	  Rcpp::Rcout << "\n";
       }
   return(wrap(b));
 }

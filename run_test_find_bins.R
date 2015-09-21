@@ -1,36 +1,21 @@
 source("utils.R")
 sourceCpp("find_bins.cpp")
-
-##Firts test 500 individuals, 50000 markers
-##ch.len<-300
-##n.mrk<-50000
-##r<-mf.k(ch.len/n.mrk)
-##n.ind<-2000
-##dat<-sim.ch.f2(n.ind, n.mrk, ch.len)
-##dat<-dat+1
-##dat[sample(1:length(dat), length(dat)*.05)]<-0
-##colnames(dat)<-paste("M", 1:n.mrk, sep="")
-
-##456.6 seconds
-##system.time(res.1<-getbins(dat))
-
-## 1397.5 seconds
-##dat<-dat[,sample(1:n.mrk)]
-##system.time(res.2<-getbins(dat))
-
-
-##Firts test 500 individuals, 50000 markers
-ch.len<-3000
-n.mrk<-250000
+ch.len<-300
+n.mrk<-20000
 r<-mf.k(ch.len/n.mrk)
-n.ind<-2000
+n.ind<-500
 dat<-sim.ch.f2(n.ind, n.mrk, ch.len)
 dat<-dat+1
 dat[sample(1:length(dat), length(dat)*.05)]<-0
-colnames(dat)<-paste("M", 1:n.mrk, sep="")
-save.image("big_example_250000_mrk_2000_ind.RData")
+dat<-dat[,sample(1:n.mrk)]
 
 system.time(res.3<-getbins(dat))
+fun(arg1, arg2, arg3)
+res <- mclapply(vec, fun, arg1=x, arg2=y, arg3=z, mc.cores=n.cluster)
+
+
+
+
 
 dat<-dat[,sample(1:n.mrk)]
 system.time(res.4<-getbins(dat))
