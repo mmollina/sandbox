@@ -41,11 +41,12 @@ x[[1]][1:3]
 new.data<-create.data.bins(fake.big.data.f2, x)
 plot(new.data)
 
-twopts.f2 <- rf.2pts(new.data)
-
-input.seq<-make.seq(twopts.f2, "all")
+system.time(w<-rf.2pts(new.data))
+input.seq<-make.seq(w, "all")
 markers <- length(input.seq$seq.num)
 ## create reconmbination fraction matrix
+max.rf<-.5
+LOD<-0
 r <- matrix(NA,markers,markers)
 for(i in 1:(markers-1)) {
   for(j in (i+1):markers) {
@@ -59,14 +60,30 @@ for(i in 1:(markers-1)) {
     else r[i,j] <- r[j,i] <- temp[phases[1],1]
   }
 }
-image(r)
+image(r[1:1000,1:1000])
 
-
+r[1,2]
 
 load(url("https://github.com/mmollina/onemap/blob/master/fake.big.data.f2.RData?raw=true"))
 fake.big.data.f2
 (bins<-find.bins(fake.big.data.f2, exact=FALSE))
 (new.data<-create.data.bins(fake.big.data.f2, bins))
-new.data$geno[new.data$geno==0]<-NA
 
+require(onemap)
+require(Rcpp)
+sourceCpp("two_pt_test.cpp")
 
+system.time(r.new<-est_rf(as.numeric(new.data$geno)))
+
+M<-matrix(NA, new.data$n.mar, new.data$n.mar)
+ct<-1
+for(i in 1:(new.data$n.mar-1)){
+  for(j in i:new.data$n.mar){
+    M[j,i]<-r.new[ct]
+    ct<-ct+1
+  }
+}
+
+image(M[1:1000,1:1000])
+
+table(new.data$geno[,1],new.data$geno[,2])
