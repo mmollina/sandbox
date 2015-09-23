@@ -9,3 +9,4 @@
 #!foo.RData
 # Ignore objects and archives.
 #*.[oa]
+.Rproj.user
