@@ -1,0 +1,42 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: input   start ] */
+M : matrix([(1-r),r],
+          [r,(1-r)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T : kronecker_product(M,M);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Use 1's for the rows and columns you wantto collpase
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik: matrix(
+ [0,1,1,0]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik1: matrix(
+ [0,1,1,1]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(Ik.T.transpose(Ik1))/(Ik.transpose(Ik));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp((Ik.T.transpose(Ik1))/(Ik.transpose(Ik)));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+To check results vist: https://github.com/kbroman/qtl/blob/master/src/hmm_f2.c
+   [wxMaxima: comment end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
