@@ -16,13 +16,13 @@ Use 1's for the rows and columns you wantto collpase
 
 /* [wxMaxima: input   start ] */
 Ik: matrix(
- [0,1,1,0]
+ [1,0,0,0]
 );
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 Ik1: matrix(
- [0,1,1,1]
+ [1,0,0,0]
 );
 /* [wxMaxima: input   end   ] */
 

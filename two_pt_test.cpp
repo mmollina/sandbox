@@ -2,15 +2,6 @@
 using namespace Rcpp;
 using namespace std;
 
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp 
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-//
 
 
 /* FUNCTION: nChoosek
@@ -51,21 +42,43 @@ SEXP est_rf(NumericVector x) {
             {
               if(x(i*n_ind+k)==1) 
                 {
-                if (x(j*n_ind+k)==2) n[1]++;
-                else if (x(j*n_ind+k)==3) n[2]++;
-                //else if(x(j*n_ind+k)==1) n[0]++;
+		  if (x(j*n_ind+k)==1) n[0]++;
+		  else if (x(j*n_ind+k)==2) n[1]++;
+		  else if(x(j*n_ind+k)==3) n[2]++;
+		  else if(x(j*n_ind+k)==4) n[3]++;
+		  else if(x(j*n_ind+k)==5) n[4]++;
                 }
               else if(x(i*n_ind+k)==2) 
                 {
-                if(x(j*n_ind+k)==1) n[1]++;
-                else if (x(j*n_ind+k)==2) n[3]++;
-                else if (x(j*n_ind+k)==3) n[1]++;
+		  if (x(j*n_ind+k)==1) n[5]++;
+		  else if (x(j*n_ind+k)==2) n[6]++;
+		  else if(x(j*n_ind+k)==3) n[7]++;
+		  else if(x(j*n_ind+k)==4) n[8]++;
+		  else if(x(j*n_ind+k)==5) n[9]++;
                 }
               else if(x(i*n_ind+k)==3) 
                 {
-                if(x(j*n_ind+k)==1) n[2]++;
-                else if (x(j*n_ind+k)==2) n[1]++;
-                //else if (x(j*n_ind+k)==3) n[0]++;
+		  if (x(j*n_ind+k)==1) n[10]++;
+		  else if (x(j*n_ind+k)==2) n[11]++;
+		  else if(x(j*n_ind+k)==3) n[12]++;
+		  else if(x(j*n_ind+k)==4) n[13]++;
+		  else if(x(j*n_ind+k)==5) n[14]++;
+                }
+              else if(x(i*n_ind+k)==4) 
+                {
+		  if (x(j*n_ind+k)==1) n[15]++;
+		  else if (x(j*n_ind+k)==2) n[16]++;
+		  else if(x(j*n_ind+k)==3) n[17]++;
+		  else if(x(j*n_ind+k)==4) n[18]++;
+		  else if(x(j*n_ind+k)==5) n[19]++;
+                }
+              else if(x(i*n_ind+k)==5) 
+                {
+		  if (x(j*n_ind+k)==1) n[20]++;
+		  else if (x(j*n_ind+k)==2) n[21]++;
+		  else if(x(j*n_ind+k)==3) n[22]++;
+		  else if(x(j*n_ind+k)==4) n[23]++;
+		  else if(x(j*n_ind+k)==5) n[24]++;
                 }
               }
           while(abs(rold-rnew) > 0.000000001)
