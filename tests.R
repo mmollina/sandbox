@@ -63,17 +63,21 @@ for(i in 1:(markers-1)) {
 image(r[1:1000,1:1000])
 
 r[1,2]
-
-load(url("https://github.com/mmollina/onemap/blob/master/fake.big.data.f2.RData?raw=true"))
-fake.big.data.f2
-(bins<-find.bins(fake.big.data.f2, exact=FALSE))
-(new.data<-create.data.bins(fake.big.data.f2, bins))
-
 require(onemap)
 require(Rcpp)
 sourceCpp("two_pt_test.cpp")
-
-system.time(r.new<-est_rf(as.numeric(new.data$geno)))
+#load(url("https://github.com/mmollina/onemap/blob/master/fake.big.data.f2.RData?raw=true"))
+#fake.big.data.f2
+#(bins<-find.bins(fake.big.data.f2, exact=FALSE))
+#(new.data<-create.data.bins(fake.big.data.f2, bins))
+data("fake.f2.onemap")
+twopt <- rf.2pts(fake.f2.onemap)
+all.mark <- make.seq(twopt,"all")
+#groups <- group(all.mark)
+#LG1 <- make.seq(groups,1)
+#LG1.rcd <- rcd(LG1)
+#LG1.rcd
+(r.new<-est_rf(as.numeric(fake.f2.onemap$geno[,c(1,30)])))
 
 M<-matrix(NA, new.data$n.mar, new.data$n.mar)
 ct<-1
@@ -87,3 +91,37 @@ for(i in 1:(new.data$n.mar-1)){
 image(M[1:1000,1:1000])
 
 table(new.data$geno[,1],new.data$geno[,2])
+
+
+## Not run: 
+data(fake.f2.onemap)
+twopt<-rf.2pts(fake.f2.onemap)
+lg<-group(make.seq(twopt, "all"))
+
+##"pre-allocate" an empty list of length lg$n.groups (3, in this case)
+maps.list<-vector("list", lg$n.groups)
+
+for(i in 1:lg$n.groups){
+  ##create linkage group i
+  LG.cur <- make.seq(lg,i)
+  ##ordering
+  map.cur<-record(LG.cur)
+  ##assign the map of the i-th group to the maps.list
+  maps.list[[i]]<-map.cur
+}
+
+##write maps.list to "fake.f2.onemap.map" file
+write.map(maps.list, "fake.f2.onemap.map")
+require(qtl)
+file<-paste(system.file("example",package="onemap"),"fake.f2.onemap.raw", sep="/")
+dat1 <- read.cross("mm", file=file, mapfile="fake.f2.onemap.map")
+dat1<-est.rf(dat1)
+
+
+
+which(fake.f2.onemap$segr.type=="B3.7")
+(r.new<-round(est_rf(as.numeric(fake.f2.onemap$geno[, c(1,17)])),5))
+r.qtl<-(round(dat1$rf,5))
+r.qtl["M17","M1"]
+
+

@@ -2,6 +2,10 @@
 /* [ Created with wxMaxima version 13.04.2 ] */
 
 /* [wxMaxima: input   start ] */
+kill();
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
 M : matrix([(1-r),r],
           [r,(1-r)]);
 /* [wxMaxima: input   end   ] */
@@ -11,7 +15,7 @@ T : kronecker_product(M,M);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
-Use 1's for the rows and columns you wantto collpase
+Use 0's for the rows and columns you wantto collpase
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -21,22 +25,69 @@ Ik: matrix(
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-Ik1: matrix(
+Ik0: matrix(
  [1,0,0,0]
 );
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-(Ik.T.transpose(Ik1))/(Ik.transpose(Ik));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-ratsimp((Ik.T.transpose(Ik1))/(Ik.transpose(Ik)));
+(Ik.T.transpose(Ik0))/(Ik.transpose(Ik));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
 To check results vist: https://github.com/kbroman/qtl/blob/master/src/hmm_f2.c
    [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+rz:(1-r)^2;
+ru:(1-r)*r;
+rd:r^2;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log((rz)^n00)+log((2*ru)^n01)+log((rd)^n02)+
+log((ru)^n10)+log((rz+rd)^n11)+log((ru)^n12)+
+log((rd)^n20)+log((2*ru)^n21)+log((rz)^n22);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(n01 + n10 + n12 + n21 + 2*(n02 + n20 + n11*(rd/(rz+rd))))/(2*n);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Complete likelihood
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+(rz)^n00          * (2*ru)^n01                   * (rd)^n02          * (rz+2*ru)^n03                * (2*ru + rd)^n04              *
+(ru)^n10          * (rz+rd)^n11                  * (ru)^n12          * (ru+rz+rd)^n13               * (rz+rd+ru)^n14               *
+(rd)^n20          * (2*ru)^n21                   * (rz)^n22          * (rd+2*ru)^n23                * (2*ru + rz)^n24              *
+((rz+2*ru)/3)^n30 * ((2*rz + 2*ru + 2*rd)/3)^n31 * ((2*ru+rd)/3)^n32 * ((3*rz + 4*ru + 2*rd)/3)^n33 * ((2*rz + 4*ru + 3*rd)/3)^n34 *
+((rd+2*ru)/3)^n40 * ((2*rz + 2*ru + 2*rd)/3)^n41 * ((2*ru+rz)/3)^n42 * ((2*rz + 4*ru + 3*rd)/3)^n43 *  ((3*rz + 4*ru + 2*rd)/3)^n44;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+n01 + n10 + n12 + n21 +
+(n04 + n23 + n32 + n40)*((2*ru)/((rd+2*ru))) + 
+(n13 + n14)*(ru/(ru+rz+rd)) + 
+(n03 + n24 + n30 + n42)*((2*ru)/((rz+2*ru))) + 
+(n31 + n41)*(2*ru)/(2*rz + 2*ru + 2*rd)+
+(n33 + n44)*(3*ru)/(3*rz + 3*ru + 2*rd)+
+(n34 + n43)*(3*ru)/(2*rz + 3*ru + 3*rd)+
+2*(
+
+(n04 + n23 + n32 + n40)*(rd/((rd+2*ru))) + 
+n11*(rd/(rz+rd)) + 
+(n13 + n14) *(rd/(ru+rz+rd)) +  
+(n31 + n41) * (2*rd)/(2*rz + 2*ru + 2*rd)+
+(n33 + n44)*(2*rd)/(3*rz + 4*ru + 2*rd)+
+(n34 + n43)*(3*rd)/(2*rz + 4*ru + 3*rd)   
+);
+/* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
