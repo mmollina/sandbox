@@ -96,15 +96,31 @@ SEXP est_rf(NumericVector x) {
 	      n[3][0] + n[3][1] + n[3][2] + n[3][3] + n[3][4] + 
 	      n[4][0] + n[4][1] + n[4][2] + n[4][3] + n[4][4]) == 0) 
 	    {
-	      //printf("\n");
 	      while(abs(rold-rnew) > TOL)
 	        {
 		  rold=rnew;
 		  q=pow(rold,2)/(pow(rold,2)+pow((1-rold),2));
 		  rnew=(2*(q*n[1][1]+n[2][0]+n[0][2])+n[2][1]+n[1][2]+n[1][0]+n[0][1])/(2*(n_ind-mis));
 	        }
-	      //Rcout << "n ind info: " << mis << "\n";
 	      r(j,i)=r(i,j)=rnew;
+	    }
+	  /*One dominant marker 5-1*/
+	  else if()
+	  /*One dominant marker 4-3*/
+	  else if()
+	  /*Two dominant marker 5-1*/
+	  else if()
+	  /*Two dominant marker 4-3*/
+	  else if()
+	  /*Two dominant marker 5-1 and 4-3*/
+	  else if()
+	  /*Mixed markers 1-2-3, 5-1 and 4-3*/
+	  else if()
+	  /*Should not get here*/
+	  else 
+	    return(-1);
+	    
+
 	      //for (int row=0; row<5; row++)
 	      //{
 	      //  for(int columns=0; columns<5; columns++)
@@ -112,7 +128,7 @@ SEXP est_rf(NumericVector x) {
 	      //  printf("\n");
 	      //}
 	      //printf("\n----------------------------------------------------\n");
-	    }
+	    
 	}
     }
   return wrap(r);
