@@ -14,6 +14,10 @@ M : matrix([(1-r),r],
 T : kronecker_product(M,M);
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+gimp
+/* [wxMaxima: input   end   ] */
+
 /* [wxMaxima: comment start ]
 Use 0's for the rows and columns you wantto collpase
    [wxMaxima: comment end   ] */
@@ -39,15 +43,15 @@ To check results vist: https://github.com/kbroman/qtl/blob/master/src/hmm_f2.c
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-rz:(1-r)^2;
-ru:(1-r)*r;
-rd:r^2;
+r0:(1-r)^2;
+r1:(1-r)*r;
+r2:r^2;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-log((rz)^n00)+log((2*ru)^n01)+log((rd)^n02)+
-log((ru)^n10)+log((rz+rd)^n11)+log((ru)^n12)+
-log((rd)^n20)+log((2*ru)^n21)+log((rz)^n22);
+log((r0)^n00)+log((2*r1)^n01)+log((r2)^n02)+
+log((r1)^n10)+log((r0+r2)^n11)+log((r1)^n12)+
+log((r2)^n20)+log((2*r1)^n21)+log((r0)^n22);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -55,7 +59,7 @@ ratsimp(%);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-(n01 + n10 + n12 + n21 + 2*(n02 + n20 + n11*(rd/(rz+rd))))/(2*n);
+(n01 + n10 + n12 + n21 + 2*(n02 + n20 + n11*(r2/(r0+r2))))/(2*n);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -63,30 +67,89 @@ Complete likelihood
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-(rz)^n00          * (2*ru)^n01                   * (rd)^n02          * (rz+2*ru)^n03                * (2*ru + rd)^n04              *
-(ru)^n10          * (rz+rd)^n11                  * (ru)^n12          * (ru+rz+rd)^n13               * (rz+rd+ru)^n14               *
-(rd)^n20          * (2*ru)^n21                   * (rz)^n22          * (rd+2*ru)^n23                * (2*ru + rz)^n24              *
-((rz+2*ru)/3)^n30 * ((2*rz + 2*ru + 2*rd)/3)^n31 * ((2*ru+rd)/3)^n32 * ((3*rz + 4*ru + 2*rd)/3)^n33 * ((2*rz + 4*ru + 3*rd)/3)^n34 *
-((rd+2*ru)/3)^n40 * ((2*rz + 2*ru + 2*rd)/3)^n41 * ((2*ru+rz)/3)^n42 * ((2*rz + 4*ru + 3*rd)/3)^n43 *  ((3*rz + 4*ru + 2*rd)/3)^n44;
+(r0)^n00          * (2*r1)^n01                   * (r2)^n02          * (r0+2*r1)^n03                * (2*r1 + r2)^n04              *
+(r1)^n10          * (r0+r2)^n11                  * (r1)^n12          * (r1+r0+r2)^n13               * (r0+r2+r1)^n14               *
+(r2)^n20          * (2*r1)^n21                   * (r0)^n22          * (r2+2*r1)^n23                * (2*r1 + r0)^n24              *
+((r0+2*r1)/3)^n30 * ((2*r0 + 2*r1 + 2*r2)/3)^n31 * ((2*r1+r2)/3)^n32 * ((3*r0 + 4*r1 + 2*r2)/3)^n33 * ((2*r0 + 4*r1 + 3*r2)/3)^n34 *
+((r2+2*r1)/3)^n40 * ((2*r0 + 2*r1 + 2*r2)/3)^n41 * ((2*r1+r0)/3)^n42 * ((2*r0 + 4*r1 + 3*r2)/3)^n43 *  ((3*r0 + 4*r1 + 2*r2)/3)^n44;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
 n01 + n10 + n12 + n21 +
-(n04 + n23 + n32 + n40)*((2*ru)/((rd+2*ru))) + 
-(n13 + n14)*(ru/(ru+rz+rd)) + 
-(n03 + n24 + n30 + n42)*((2*ru)/((rz+2*ru))) + 
-(n31 + n41)*(2*ru)/(2*rz + 2*ru + 2*rd)+
-(n33 + n44)*(3*ru)/(3*rz + 3*ru + 2*rd)+
-(n34 + n43)*(3*ru)/(2*rz + 3*ru + 3*rd)+
+(n04 + n23 + n32 + n40)*((2*r1)/((r2+2*r1))) + 
+(n13 + n14 + n31 + n41)*(r1/(r1+r0+r2)) + 
+(n03 + n24 + n30 + n42)*((2*r1)/((r0+2*r1))) + 
+(n33 + n44)*(4*r1)/(3*r0 + 4*r1 + 2*r2)+
+(n34 + n43)*(4*r1)/(2*r0 + 4*r1 + 3*r2)+
 2*(
-
-(n04 + n23 + n32 + n40)*(rd/((rd+2*ru))) + 
-n11*(rd/(rz+rd)) + 
-(n13 + n14) *(rd/(ru+rz+rd)) +  
-(n31 + n41) * (2*rd)/(2*rz + 2*ru + 2*rd)+
-(n33 + n44)*(2*rd)/(3*rz + 4*ru + 2*rd)+
-(n34 + n43)*(3*rd)/(2*rz + 4*ru + 3*rd)   
+n02 + n20 +
+(n04 + n23 + n32 + n40)*(r2/((r2+2*r1))) + 
+n11*(r2/(r0+r2)) + 
+(n13 + n14 + n31 + n41) *(r2/(r1+r0+r2)) +  
+(n33 + n44)*(2*r2)/(3*r0 + 4*r1 + 2*r2)+
+(n34 + n43)*(3*r2)/(2*r0 + 4*r1 + 3*r2)   
 );
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill();
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(r0)^n00          * (2*r1)^n01                   * (r2)^n02          * (r0+2*r1)^n03                * (2*r1 + r2)^n04              *
+(r1)^n10          * (r0+r2)^n11                  * (r1)^n12          * (r1+r0+r2)^n13               * (r0+r2+r1)^n14               *
+(r2)^n20          * (2*r1)^n21                   * (r0)^n22          * (r2+2*r1)^n23                * (2*r1 + r0)^n24              *
+((r0+2*r1)/3)^n30 * ((2*r0 + 2*r1 + 2*r2)/3)^n31 * ((2*r1+r2)/3)^n32 * ((3*r0 + 4*r1 + 2*r2)/3)^n33 * ((2*r0 + 4*r1 + 3*r2)/3)^n34 *
+((r2+2*r1)/3)^n40 * ((2*r0 + 2*r1 + 2*r2)/3)^n41 * ((2*r1+r0)/3)^n42 * ((2*r0 + 4*r1 + 3*r2)/3)^n43 *  ((3*r0 + 4*r1 + 2*r2)/3)^n44;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+H: matrix(
+ [0,0,0,0,0], 
+ [0,0,0,0,0], 
+ [0,0,0,0,0], 
+ [0,0,0,0,0], 
+ [0,0,0,0,0]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log(r0^n00)+ n01*log(2*r1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+.5*.5;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+n1*log(r) + n2*log(r+2*r) + n3*log(r+r+r) +
+	    n4*log(r+2*r) + n5*log(3*r + 4*r + 2*r) +
+	    n6*log(2*r + 4*r + 3*r) + n7*log(r+r) + n8*log(r);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(.25, r, %);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rnew:.5;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+r0:(1-rnew)*(1-rnew);
+	  r1:(1-rnew)*rnew;
+	  r2:rnew*rnew;
+	  l:n1*log(r1) + n2*log(r2+2*r1) + n3*log(r1+r0+r2) +
+	    n4*log(r0+2*r1) + n5*log(3*r0 + 4*r1 + 2*r2) +
+	    n6*log(2*r0 + 4*r1 + 3*r2) + n7*log(r0+r2) + n8*log(r2);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+factor(%);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

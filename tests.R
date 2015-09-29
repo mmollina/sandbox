@@ -78,7 +78,6 @@ all.mark <- make.seq(twopt,"all")
 #LG1.rcd <- rcd(LG1)
 #LG1.rcd
 (r.new<-est_rf(as.numeric(fake.f2.onemap$geno[,c(1,30)])))
-
 M<-matrix(NA, new.data$n.mar, new.data$n.mar)
 ct<-1
 for(i in 1:(new.data$n.mar-1)){
@@ -89,7 +88,6 @@ for(i in 1:(new.data$n.mar-1)){
 }
 
 image(M[1:1000,1:1000])
-
 table(new.data$geno[,1],new.data$geno[,2])
 
 
@@ -118,10 +116,10 @@ dat1 <- read.cross("mm", file=file, mapfile="fake.f2.onemap.map")
 dat1<-est.rf(dat1)
 
 
+sourceCpp("two_pt_test_updated.cpp")
+fake.f2.onemap$geno.mmk[[1]][is.na(fake.f2.onemap$geno.mmk[[1]])]<-0
+r.qtl<-round(dat1$rf,3)
+r.new<-round(est_rf(as.numeric(fake.f2.onemap$geno.mmk[[1]][, colnames(r.qtl)]), fake.f2.onemap$n.ind), 3)
+r.new
 
-which(fake.f2.onemap$segr.type=="B3.7")
-(r.new<-round(est_rf(as.numeric(fake.f2.onemap$geno[, c(1,17)])),5))
-r.qtl<-(round(dat1$rf,5))
-r.qtl["M17","M1"]
-
-
+image(r.new==r.qtl, col=c(2,4))
