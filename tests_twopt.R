@@ -78,6 +78,7 @@ dim(geno.s)
 sourceCpp("two_pt_test_updated.cpp")
 system.time(r.new2<-est_rf_f2(as.numeric(geno.s), 250))
 
+require(onemap)
 
 sourceCpp("twopt_est_out.cpp")
 data("example.out")
@@ -88,3 +89,24 @@ print(twopt, mrk1="M4", mrk2 = "M6")
 t(sapply(ble, function(x) c(x[6,4], x[4,6])))
 for(i in 1:4){ dimnames(ble[[i]])<-list(example.out$segr.type, example.out$segr.type)}
 ble[[1]]
+
+
+
+require(Rcpp)
+geno<-NULL
+segrega.type<-sample(c(1,4), size=1000, replace=TRUE)
+for(i in segrega.type)
+    {
+        if(i==1)
+            geno<-cbind(geno,sample(1:4, size=250, replace=TRUE))
+        else
+            geno<-cbind(geno,sample(1:3, size=250, replace=TRUE))
+    }
+
+sourceCpp("twopt_est_out.cpp")
+t1<-system.time(ble<-est_rf_out(x=geno, segreg_type = segrega.type, 250))
+sourceCpp("twopt_est_out_update.cpp")
+t2<-system.time(bli<-est_rf_out(x=geno, segreg_type = segrega.type, 250))
+t1;t2
+identical(ble,bli)
+bli[[1]][1:10,1:10]

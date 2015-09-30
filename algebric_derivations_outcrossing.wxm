@@ -133,6 +133,7 @@ Markers type A with B
 A with B1
    [wxMaxima: comment end   ] */
 
+/* [wxMaxima: hide output   ] */
 /* [wxMaxima: input   start ] */
 Ik:IB1$ Ik1:IA$
 T:kronecker_product(MC,MC)$
@@ -145,6 +146,7 @@ rnew: (I3.((MCC*N34)/TCC) . I4)/(2*(I3.N34. I4))$
 ratsimp(rnew);
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: hide output   ] */
 /* [wxMaxima: input   start ] */
 Ik:IB2$ Ik1:IA$
 T:kronecker_product(MC,MC)$
@@ -163,7 +165,7 @@ T:kronecker_product(MC,MC)$
 DCC: kronecker_sum(DC,DC)$
 TCC : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lTCC: log(TCC)$
-ratsimp(I3.(lTCC*N3).I4);
+ratsimp(I3.(lTCC*N34).I4);
 MCC: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DCC).transpose(Ik1)))$
 rnew: (I3.((MCC*N34)/TCC) . I4)/(2*(I3.N34. I4));
 /* [wxMaxima: input   end   ] */
@@ -174,7 +176,7 @@ T:kronecker_product(MC,MR)$
 DCR: kronecker_sum(DC,DR)$
 TCR : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lTCR: log(TCR)$
-ratsimp(I3.(lTCR*N3).I4);
+ratsimp(I3.(lTCR*N34).I4);
 MCR: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DCR).transpose(Ik1)))$
 rnew: (I3.((MCR*N34)/TCR) . I4)/(2*(I3.N34. I4));
 /* [wxMaxima: input   end   ] */
@@ -185,7 +187,7 @@ T:kronecker_product(MR,MC)$
 DRC: kronecker_sum(DR,DC)$
 TRC : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lTRC: log(TRC)$
-ratsimp(I3.(lTRC*N3).I4);
+ratsimp(I3.(lTRC*N34).I4);
 MRC: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DRC).transpose(Ik1)))$
 rnew: (I3.((MRC*N34)/TRC) . I4)/(2*(I3.N34. I4));
 /* [wxMaxima: input   end   ] */
@@ -194,11 +196,23 @@ rnew: (I3.((MRC*N34)/TRC) . I4)/(2*(I3.N34. I4));
 Ik:IB3$ Ik1:IA$
 T:kronecker_product(MR,MR)$
 DRR: kronecker_sum(DR,DR)$
-TRR : Ik.(((U.transpose(Ik1))/¦transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+TRR : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lTRR: log(TRR)$
-ratsimp(I3.(lTRR*N3).I4);
+ratsimp(I3.(lTRR*N34).I4);
 MRR: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DRR).transpose(Ik1)))$
 rnew: (I3.((MRR*N34)/TRR) . I4)/(2*(I3.N34. I4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(n23+n22)*log((2*.5^2−2*.5+1)/2)+(n33+n32+n24+n21+n13+n12)*log(.5−.5^2)+(2*n31+2*n14)*log(.5)+(2*n34+2*n11)*log(1−.5);
+(n24+n21)*log((2*.5^2−2*.5+1)/2)+(n34+n31+n23+n22+n14+n11)*log(.5−.5^2)+(2*n32+2*n13)*log(.5)+(2*n33+2*n12)*log(1−.5);
+(n24+n21)*log((2*.5^2−2*.5+1)/2)+(n34+n31+n23+n22+n14+n11)*log(.5−.5^2)+(2*n33+2*n12)*log(.5)+(2*n32+2*n13)*log(1−.5);
+(n23+n22)*log((2*.5^2−2*.5+1)/2)+(n33+n32+n24+n21+n13+n12)*log(.5−.5^2)+(2*n34+2*n11)*log(.5)+(2*n31+2*n14)*log(1−.5);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+log(2.0);
+log(2.0)*2;
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
