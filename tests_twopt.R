@@ -76,10 +76,15 @@ geno.s<-geno.t
 #geno.s<-geno.s[,order(as.numeric(substring(colnames(geno.s), 6)))]
 dim(geno.s)
 sourceCpp("two_pt_test_updated.cpp")
-system.time(r.new2<-est_rf(as.numeric(geno.s), 250))
+system.time(r.new2<-est_rf_f2(as.numeric(geno.s), 250))
 
 
-
-
-
-
+sourceCpp("twopt_est_out.cpp")
+data("example.out")
+id<-which(example.out$segr.type.num==1 | example.out$segr.type.num==4)
+system.time(twopt <- rf.2pts(example.out))
+system.time(ble<-est_rf_out(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind))
+print(twopt, mrk1="M4", mrk2 = "M6")
+t(sapply(ble, function(x) c(x[6,4], x[4,6])))
+for(i in 1:4){ dimnames(ble[[i]])<-list(example.out$segr.type, example.out$segr.type)}
+ble[[1]]

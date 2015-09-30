@@ -147,5 +147,46 @@ l:n0 * (2.0*log(1.0-rnew)) +
 	    n8 * (2.0*log(rnew));
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+lT:log(T);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+lT;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+I: matrix(
+ [n1,n2,n3,n4], 
+ [n5,n6,n7,n8], 
+ [n9,n10,n11,n12], 
+ [n13,n14,n15,n16]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A: matrix(
+ [1,1,1,1]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A.(lT*I).A;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+M : matrix([(1-r),r],
+          [r,(1-r)]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+T : kronecker_product(M,M);
+/* [wxMaxima: input   end   ] */
+
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$

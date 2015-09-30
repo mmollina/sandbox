@@ -1,0 +1,205 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 13.04.2 ] */
+
+/* [wxMaxima: title   start ]
+Initializing variables and functions
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(all)$
+MC : matrix([(1-r),r],
+          [r,(1-r)])$
+MR : matrix([r,(1-r)],
+          [(1-r),r])$
+DC : matrix([0,1],
+          [1,0])$
+DR : matrix([1,0],
+          [0,1])$
+I4: matrix(
+ [1,1,1,1]
+)$
+
+I3: matrix(
+ [1,1,1]
+)$
+
+I2: matrix(
+ [1,1]
+)$
+
+kronecker_sum(a,b) := (
+  require_matrix(a,"first", "kronecker_sum"),
+  require_matrix(b,"second", "kronecker_sum"),
+  mat_unblocker(outermap('matrix_element_add, a,b)))$
+
+U: matrix(
+ [1,1,1,1], 
+ [1,1,1,1], 
+ [1,1,1,1], 
+ [1,1,1,1]
+)$
+IA: matrix(
+ [1,0,0,0], 
+ [0,1,0,0], 
+ [0,0,1,0], 
+ [0,0,0,1]
+)$
+IB1:matrix(
+ [1,1,0,0], 
+ [0,0,1,0], 
+ [0,0,0,1]
+)$
+IB2:matrix(
+ [1,0,1,0], 
+ [0,1,0,0], 
+ [0,0,0,1]
+)$
+IB3:matrix(
+ [1,0,0,0], 
+ [0,1,1,0], 
+ [0,0,0,1]
+)$
+IC:matrix(
+ [1,1,1,0],
+ [0,0,0,1]
+)$
+ID1:matrix(
+ [1,1,0,0],
+ [0,0,1,1]
+)$
+ID2:matrix(
+ [1,0,1,0],
+ [0,1,0,1]
+)$
+N4: matrix(
+ [n11,n12,n13,n14], 
+ [n21,n22,n23,n24], 
+ [n31,n32,n33,n34], 
+ [n41,n42,n43,n44]
+)$
+N34: submatrix(4, N4)$
+N43: submatrix(N4, 4)$
+N33: submatrix(4, N4, 4)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: title   start ]
+Markers type A
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: fold    start ] */
+
+/* [wxMaxima: comment start ]
+Likelihood
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+TCC : kronecker_product(MC,MC)$
+lTCC : log(TCC)$
+ratsimp(I4.(lTCC*N4).I4);
+lTCR : log(kronecker_product(MC,MR))$
+ratsimp(I4.(lTCR*N4).I4);
+lTRC : log(kronecker_product(MR,MC))$
+ratsimp(I4.(lTRC*N4).I4);
+lTRR : log(kronecker_product(MR,MR))$
+ratsimp(I4.(lTRR*N4).I4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+DCC: kronecker_sum(DC,DC);
+(I4.((DCC*TCC*N4)/TCC).I4)/(I4.N4.I4);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+M step
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+rCC:(((n43+n42+n34+n31+n24+n21+n13+n12)+2*(n41+n32+n23+n14))/ (n11+n12+n13+n14+n21+n22+n23+n24+n31+n32+n33+n34+n41+n42+n43+n44));
+
+rCR:(((n44+n41+n33+n32+n23+n22+n14+n11)+2*(n42+n31+n24+n13))/ (n11+n12+n13+n14+n21+n22+n23+n24+n31+n32+n33+n34+n41+n42+n43+n44));
+
+rRC:(((n44+n41+n33+n32+n23+n22+n14+n11)+2*(n43+n34+n21+n12))/ (n11+n12+n13+n14+n21+n22+n23+n24+n31+n32+n33+n34+n41+n42+n43+n44));
+
+rRR:(((n43+n42+n34+n31+n24+n21+n13+n12)+2*(n44+n33+n22+n11))/ (n11+n12+n13+n14+n21+n22+n23+n24+n31+n32+n33+n34+n41+n42+n43+n44));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: fold    end   ] */
+
+/* [wxMaxima: title   start ]
+Markers type A with B
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+A with B1
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik:IB1$ Ik1:IA$
+T:kronecker_product(MC,MC)$
+DCC: kronecker_sum(DC,DC)$
+TCC : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lTCC: log(TCC)$
+ratsimp(I3.(lTCC*N3).I4)$
+MCC: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DCC).transpose(Ik1)))$
+rnew: (I3.((MCC*N34)/TCC) . I4)/(2*(I3.N34. I4))$
+ratsimp(rnew);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik:IB2$ Ik1:IA$
+T:kronecker_product(MC,MC)$
+DCC: kronecker_sum(DC,DC)$
+TCC : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lTCC: log(TCC)$
+ratsimp(I3.(lTCC*N3).I4)$
+MCC: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DCC).transpose(Ik1)))$
+rnew: (I3.((MCC*N34)/TCC) . I4)/(2*(I3.N34. I4))$
+ratsimp(rnew);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik:IB3$ Ik1:IA$
+T:kronecker_product(MC,MC)$
+DCC: kronecker_sum(DC,DC)$
+TCC : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lTCC: log(TCC)$
+ratsimp(I3.(lTCC*N3).I4);
+MCC: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DCC).transpose(Ik1)))$
+rnew: (I3.((MCC*N34)/TCC) . I4)/(2*(I3.N34. I4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik:IB3$ Ik1:IA$
+T:kronecker_product(MC,MR)$
+DCR: kronecker_sum(DC,DR)$
+TCR : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lTCR: log(TCR)$
+ratsimp(I3.(lTCR*N3).I4);
+MCR: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DCR).transpose(Ik1)))$
+rnew: (I3.((MCR*N34)/TCR) . I4)/(2*(I3.N34. I4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik:IB3$ Ik1:IA$
+T:kronecker_product(MR,MC)$
+DRC: kronecker_sum(DR,DC)$
+TRC : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lTRC: log(TRC)$
+ratsimp(I3.(lTRC*N3).I4);
+MRC: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DRC).transpose(Ik1)))$
+rnew: (I3.((MRC*N34)/TRC) . I4)/(2*(I3.N34. I4));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik:IB3$ Ik1:IA$
+T:kronecker_product(MR,MR)$
+DRR: kronecker_sum(DR,DR)$
+TRR : Ik.(((U.transpose(Ik1))/¦transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lTRR: log(TRR)$
+ratsimp(I3.(lTRR*N3).I4);
+MRR: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*DRR).transpose(Ik1)))$
+rnew: (I3.((MRR*N34)/TRR) . I4)/(2*(I3.N34. I4));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
