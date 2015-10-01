@@ -82,7 +82,7 @@ require(onemap)
 
 sourceCpp("twopt_est_out.cpp")
 data("example.out")
-id<-which(example.out$segr.type.num==1 | example.out$segr.type.num==4)
+id<-which(example.out$segr.type.num==1 | example.out$segr.type.num==4 )
 system.time(twopt <- rf.2pts(example.out))
 system.time(ble<-est_rf_out(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind))
 print(twopt, mrk1="M4", mrk2 = "M6")
@@ -93,20 +93,83 @@ ble[[1]]
 
 
 require(Rcpp)
+require(onemap)
+data("example.out")
+x<-rf.2pts(example.out)
+print(x, "M4", "M19")
+which(example.out$segr.type.num==1)
+
 geno<-NULL
-segrega.type<-sample(c(1,4), size=1000, replace=TRUE)
+segrega.type<-sample(c(1,4), size=100, replace=TRUE)
 for(i in segrega.type)
     {
         if(i==1)
-            geno<-cbind(geno,sample(1:4, size=250, replace=TRUE))
+            geno<-cbind(geno,sample(1:4, size=100, replace=TRUE))
         else
-            geno<-cbind(geno,sample(1:3, size=250, replace=TRUE))
+            geno<-cbind(geno,sample(1:3, size=100, replace=TRUE))
     }
+
+segrega.type[c(4,19)]<-c(1,2)
+geno[,c(4,19)]<-example.out$geno[,c(4,19)]
+
+bli[[1]][19,4]
 
 sourceCpp("twopt_est_out.cpp")
 t1<-system.time(ble<-est_rf_out(x=geno, segreg_type = segrega.type, 250))
 sourceCpp("twopt_est_out_update.cpp")
-t2<-system.time(bli<-est_rf_out(x=geno, segreg_type = segrega.type, 250))
+t2<-system.time(bli<-est_rf_out_new(x=geno, segreg_type = segrega.type, 250))
 t1;t2
-identical(ble,bli)
-bli[[1]][1:10,1:10]
+identical(lapply(ble, round, 3),lapply(bli, round,3))
+
+all(round(ble[[1]][1:10,1:10],3) == round(bli[[1]][1:10,1:10],3))
+
+ble[[1]][1:10,1:10] - bli[[1]][1:10,1:10]
+
+
+blo<-NULL
+for(i in 1:499)
+{
+  for( j in (i+1):500)
+  {
+    cat(i, "--", j, "\n")
+    if(segrega.type[i]==1 &&  segrega.type[j]==4)
+    {
+      blo<-c(blo, all(round(bli[[1]][j,i]+bli[[4]][j,i],5)==1L,
+          round(bli[[2]][j,i]+bli[[3]][j,i],5)==1L,
+          round(bli[[2]][i,j],5)==round(bli[[3]][i,j],5),
+          round(bli[[2]][i,j],5)==round(bli[[3]][i,j],5)))
+    }
+  }
+}
+
+all(blo)
+
+
+
+sourceCpp("twopt_est_out_update.cpp")
+ble<-est_rf_out_new(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind)
+x<-rf.2pts(example.out)
+print(x, mrk1="M4", mrk2 = "M19")
+t(sapply(ble, function(x) c(x[19,4], x[4,19])))
+print(x, mrk1="M4", mrk2 = "M17")
+t(sapply(ble, function(x) c(x[17,4], x[4,17])))
+print(x, mrk1="M13", mrk2 = "M14")
+t(sapply(ble, function(x) c(x[14,13], x[13,14])))
+print(x, mrk1="M3", mrk2 = "M4")
+t(sapply(ble, function(x) c(x[4,3], x[3,4])))
+print(x, mrk1="M4", mrk2 = "M5")
+t(sapply(ble, function(x) c(x[5,4], x[4,5])))
+
+temp<-example.out$geno[,26]
+temp[temp==1 | temp==2]<-1
+temp[temp==3]<-2
+temp[temp==4]<-3
+example.out$geno[,26]<-temp
+example.out$segr.type[26]<-"B2.6"
+example.out$segr.type.num[26]<-2
+print(x, mrk1="M19", mrk2 = "M26")
+t(sapply(ble, function(x) c(x[26,19], x[19,26])))
+
+
+print(x, mrk1="M19", mrk2 = "M25")
+t(sapply(ble, function(x) c(x[25,19], x[19,25])))
