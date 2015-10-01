@@ -35,3 +35,9 @@ Rcpp::NumericVector rf_B1_B1(Rcpp::NumericMatrix n,
 Rcpp::NumericVector rf_B1_B2(Rcpp::NumericMatrix n,
 			     int n_ind,
 			     int mis);
+Rcpp::NumericVector rf_B1_B3(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis);
+Rcpp::NumericVector rf_B1_C(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis);

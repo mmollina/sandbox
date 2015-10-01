@@ -61,6 +61,12 @@ SEXP est_rf_out_new(NumericVector x, NumericVector segreg_type, NumericVector n_
 	    case 3: 
 	      r=rf_B1_B2(n,n_ind, n(0,0));	      /*Markers B1 - B2*/
 	      break;	    
+	    case 4: 
+	      r=rf_B1_B3(n,n_ind, n(0,0));	      /*Markers B1 - B3*/
+	      break;	    
+	    case 5: 
+	      r=rf_B1_C(n,n_ind, n(0,0));	      /*Markers B1 - c*/
+	      break;	    
 	    }
 	    break;
 	  case 3:
@@ -82,6 +88,10 @@ SEXP est_rf_out_new(NumericVector x, NumericVector segreg_type, NumericVector n_
 	      n=transpose_counts(n);
 	      r=rf_A_B3(n,n_ind, n(0,0));	      /*Markers B3 - A*/
 	      break;	    
+	    case 2: 
+	      n=transpose_counts(n);
+	      r=rf_B1_B3(n,n_ind, n(0,0));	      /*Markers B3 - B1*/
+	      break;	    	      
 	    }
 	    break;
 	  case 5:
@@ -89,6 +99,10 @@ SEXP est_rf_out_new(NumericVector x, NumericVector segreg_type, NumericVector n_
 	    case 1: 
 	      n=transpose_counts(n);
 	      r=rf_A_C(n,n_ind, n(0,0));	      /*Markers C - A*/
+	      break;	    
+	    case 2: 
+	      n=transpose_counts(n);
+	      r=rf_B1_C(n,n_ind, n(0,0));	      /*Markers C - B1*/
 	      break;	    
 	    }
 	    break;
