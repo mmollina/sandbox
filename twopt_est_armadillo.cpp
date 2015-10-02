@@ -1,27 +1,28 @@
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 using namespace arma;
+#define TOL 1e-05
 
 arma::mat count_genotypes(Rcpp::NumericVector x,
-			  int i,
-			  int j,
-			  int n_ind)
+			    int i,
+			    int j,
+			    int n_ind)
 {
-  int mis=0;
-  arma::mat n(5,5);
-  std::fill(n.begin(), n.end(), 0);
-  mis=0;
-  for(int k=0; k < n_ind; k++)
-    {
-      if(x(i*n_ind+k)==1) 
-	{
-	  if (x(j*n_ind+k)==1) n(1,1)++;
-	  else if (x(j*n_ind+k)==2) n(1,2)++;
-	  else if (x(j*n_ind+k)==3) n(1,3)++;
-	  else if (x(j*n_ind+k)==4) n(1,4)++;
-	  else mis++;
-	}
-      else if(x(i*n_ind+k)==2) 
+int mis=0;
+arma::mat n(5,5);
+std::fill(n.begin(), n.end(), 0);
+mis=0;
+for(int k=0; k < n_ind; k++)
+  {
+if(x(i*n_ind+k)==1) 
+  {
+if (x(j*n_ind+k)==1) n(1,1)++;
+ else if (x(j*n_ind+k)==2) n(1,2)++;
+ else if (x(j*n_ind+k)==3) n(1,3)++;
+ else if (x(j*n_ind+k)==4) n(1,4)++;
+ else mis++;
+}
+ else if(x(i*n_ind+k)==2) 
 	{
 	  if (x(j*n_ind+k)==1) n(2,1)++;
 	  else if (x(j*n_ind+k)==2) n(2,2)++;
@@ -65,10 +66,11 @@ arma::mat Tr(double r)
 arma::mat est_rf_arma(NumericVector x)
 {
   int n_ind=250, n_mar=((int)x.size()/n_ind);
+  arma::mat loglike, rold, rnew;
   arma::mat T(4,4);
   arma::mat n(5,5);
-  arma::mat I3(3,1,fill::ones);
-  arma::mat I2(2,1,fill::ones);
+  arma::mat I3(1,3,fill::ones);
+  arma::mat I2(1,2,fill::ones);
   arma::mat U(4,4,fill::ones);
   arma::mat D(4,4,fill::ones);
   D(0,0)=D(1,1)=D(2,2)=D(3,3)=0;
@@ -79,18 +81,31 @@ arma::mat est_rf_arma(NumericVector x)
   IC(0,0)=IC(0,1)=IC(0,2)=IC(1,3)=1;
   arma::mat M(IB1.n_rows, IC.n_rows);
   arma::mat H(IB1.n_rows, IC.n_rows);
+  arma::mat A1(4,IC.n_rows);
+  A1=((U*trans(IC))/(trans(IB1)*IB1*U*trans(IC)));
   for(int i=0; i < n_mar-1; i++)
     {
       R_CheckUserInterrupt(); /* check for ^C */
       for(int j=(i+1); j  < n_mar; j++)
         {
 	  n=count_genotypes(x,i,j,n_ind);
-	  T=Tr(.01);
-	  H=IB1*(((U*trans(IC))/(trans(IB1)*IB1*U*trans(IC)))%((T)*trans(IC)));
-	  M=IB1*(((U*trans(IC))/(trans(IB1)*IB1*U*trans(IC)))%((T%D)*trans(IC)));
-	  //Rcpp::Rcout << "\nlikelihood: " << I3%(log(H)*n)%I2 << "\n"; //ERRO: tenho que pegar uma submatrix 
+          double rold=0, rnew=0.01;	     
+	  while(abs(rold-rnew) > TOL)
+	    {
+	      rold=rnew;
+	      T=Tr(rnew);
+	      H=IB1*(A1%((T)*trans(IC)));
+	      M=IB1*(A1%((T%D)*trans(IC)));
+              loglike=arma::as_scalar(I3*(log(H)%n(span(1,3), span(1,2)))*trans(I2));
+              rnew=arma::as_scalar((I3*((M % n(span(1,3),span(1,2)))/H) * trans(I2)) / (2.0*(89-n(0,0))));
+	      Rcpp::Rcout << "\tlikelihood: " <<  loglike  << "\trf: "<< rf << "\n";
+	    }
 	}
     }
-  //List z = List::create(H, n, U, IB1, C);
-  return(M) ;
+    // returns
+    List ret ;
+    ret["loglike"] = loglike ;
+    ret["r"] = rf ;
+    return(ret) ;
+
 }
