@@ -174,12 +174,13 @@ t(sapply(ble, function(x) c(x[26,19], x[19,26])))
 print(x, mrk1="M19", mrk2 = "M25")
 t(sapply(ble, function(x) c(x[25,19], x[19,25])))
 print(x, mrk1="M1", mrk2 = "M19")
+
 t(sapply(ble, function(x) c(x[19,1], x[1,19])))
 print(x, mrk1="M13", mrk2 = "M19")
 t(sapply(ble, function(x) c(x[19,13], x[13,19])))
 
-
-
-
+sourceCpp("twopt_est_armadillo.cpp")
+A<-matrix(sample(1:4, 500, replace = TRUE), 250,2)
+est_rf_arma(A)
 
 

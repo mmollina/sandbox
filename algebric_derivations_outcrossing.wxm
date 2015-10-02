@@ -81,6 +81,7 @@ N34: submatrix(4, N4)$
 N43: submatrix(N4, 4)$
 N33: submatrix(4, N4, 4)$
 N42: submatrix(N4, 3,4);
+N32: submatrix(4,N4, 3,4);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: title   start ]
@@ -216,15 +217,15 @@ print("---------------------------------")$
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-Ik:IB1$ Ik1:IB2$
+Ik:IB1$ Ik1:IB3$
 T:kronecker_product(MC,MC)$
 D: kronecker_sum(DC,DC)$
 H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lH: log(H)$
-ratsimp(I3.(lH*N33).I3);
+(I3.(lH*N33).I3);
 M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
 rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
-factor(rnew);
+(rnew);
 print("---------------------------------")$
 T:kronecker_product(MC,MR)$
 D: kronecker_sum(DC,DR)$
@@ -233,28 +234,87 @@ lH: log(H)$
 ratsimp(I3.(lH*N33).I3);
 M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
 rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
+(rnew);
+print("---------------------------------")$
+T:kronecker_product(MR,MC)$
+D: kronecker_sum(DR,DC)$
+H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lH: log(H)$
+ratsimp(I3.(lH*N33).I3)$
+M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
+rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
+factor(rnew)$
+print("---------------------------------")$
+T:kronecker_product(MR,MR)$
+D: kronecker_sum(DR,DR)$
+H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lH: log(H)$
+ratsimp(I3.(lH*N33).I3)$
+M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
+rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
+factor(rnew)$
+print("---------------------------------")$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ik:IB1$ Ik1:IC$
+T:kronecker_product(MC,MC)$
+D: kronecker_sum(DC,DC)$
+H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lH: log(H)$
+ratsimp(I3.(lH*N32).I2);
+M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
+rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
+factor(rnew);
+print("---------------------------------")$
+T:kronecker_product(MC,MR)$
+D: kronecker_sum(DC,DR)$
+H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
+lH: log(H)$
+ratsimp(I3.(lH*N32).I2);
+M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
+rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
 factor(rnew);
 print("---------------------------------")$
 T:kronecker_product(MR,MC)$
 D: kronecker_sum(DR,DC)$
 H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lH: log(H)$
-ratsimp(I3.(lH*N33).I3);
+ratsimp(I3.(lH*N32).I2);
 M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
+rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
 factor(rnew);
 print("---------------------------------")$
 T:kronecker_product(MR,MR)$
 D: kronecker_sum(DR,DR)$
 H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lH: log(H)$
-ratsimp(I3.(lH*N33).I3);
+ratsimp(I3.(lH*N32).I2);
 M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
+rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
 factor(rnew);
 print("---------------------------------")$
 /* [wxMaxima: input   end   ] */
 
+/* [wxMaxima: input   start ] */
+ratsimp(n12*r^4+n11*r^4+n22*r^3+n21*r^3−2*n12*r^3−4*n11*r^3−2*n31*r^2−3*n22*r^2−n21*r^2+4*n11*r^2+2*n31*r+3*n22*r−2*n21*r+n12*r−3*n11*r−2*n31−2*n22−2*n12);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(.5, r, n21*log(r^2−r+1)+n31*log(2*r−r^2)+n22*log(r−r^2)+n12*log(r/2)+n11*log(−(r−2)/2)+2*n32*log(1−r));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(r+1)*(r^2−r+1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ratsimp(n12*r^4+n11*r^4+n32*r^3+n31*r^3−2*n12*r^3−4*n11*r^3−3*n32*r^2−n31*r^2−2*n21*r^2+4*n11*r^2+3*n32*r−2*n31*r+2*n21*r+n12*r−3*n11*r−2*n32−2*n21−2*n12);
+/* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
