@@ -149,8 +149,8 @@ require(onemap)
 require(Rcpp)
 sourceCpp("twopt_est_out_update.cpp")
 data(example.out)
-system.time(for(i in 1:100) ble<-est_rf_out_new(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind))
-system.time(for(i in 1:100) x<-rf.2pts(example.out,verbose = FALSE))
+ble<-est_rf_out_new(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind)
+x<-rf.2pts(example.out,verbose = FALSE)
 
 print(x, mrk1="M4", mrk2 = "M19")
 t(sapply(ble, function(x) c(x[19,4], x[4,19])))
@@ -180,7 +180,7 @@ print(x, mrk1="M13", mrk2 = "M19")
 t(sapply(ble, function(x) c(x[19,13], x[13,19])))
 
 sourceCpp("twopt_est_armadillo.cpp")
-A<-matrix(sample(1:4, 500, replace = TRUE), 250,2)
-est_rf_arma(A)
-
+#A<-matrix(sample(1:4, 500, replace = TRUE), 250,2)
+est_rf_arma(example.out$geno[,c(19,13)])
+table(A[,1], A[,2])
 

@@ -65,8 +65,8 @@ arma::mat Tr(double r)
 // [[Rcpp::export]]
 arma::mat est_rf_arma(NumericVector x)
 {
-  int n_ind=250, n_mar=((int)x.size()/n_ind);
-  arma::mat loglike, rold, rnew;
+  int n_ind=100, n_mar=((int)x.size()/n_ind);
+  double rold=0, rnew=0.01, loglike;	     
   arma::mat T(4,4);
   arma::mat n(5,5);
   arma::mat I3(1,3,fill::ones);
@@ -89,23 +89,26 @@ arma::mat est_rf_arma(NumericVector x)
       for(int j=(i+1); j  < n_mar; j++)
         {
 	  n=count_genotypes(x,i,j,n_ind);
-          double rold=0, rnew=0.01;	     
-	  while(abs(rold-rnew) > TOL)
+          rold=0, rnew=0.01;	     
+	  while(rnew-rold > TOL)
 	    {
+	      Rcpp::Rcout << "entrei" << "\n";
 	      rold=rnew;
 	      T=Tr(rnew);
 	      H=IB1*(A1%((T)*trans(IC)));
 	      M=IB1*(A1%((T%D)*trans(IC)));
               loglike=arma::as_scalar(I3*(log(H)%n(span(1,3), span(1,2)))*trans(I2));
-              rnew=arma::as_scalar((I3*((M % n(span(1,3),span(1,2)))/H) * trans(I2)) / (2.0*(89-n(0,0))));
-	      Rcpp::Rcout << "\tlikelihood: " <<  loglike  << "\trf: "<< rf << "\n";
+	      //(I3*(log(H)%n(span(1,3), span(1,2)))*trans(I2));
+              rnew=arma::as_scalar((I3*((M % n(span(1,3),span(1,2)))/H) * trans(I2)) / (2.0*(100-n(0,0))));
+	      //((I3*((M % n(span(1,3),span(1,2)))/H) * trans(I2)) / (2.0*(89-n(0,0))));
+	      Rcpp::Rcout << "\tlikelihood: " <<  loglike  << "\trf: "<< rnew << "\n";
 	    }
 	}
     }
     // returns
-    List ret ;
-    ret["loglike"] = loglike ;
-    ret["r"] = rf ;
-    return(ret) ;
-
+    //List ret ;
+    //ret["loglike"] = loglike ;
+    //ret["r"] = rf ;
+    //return(ret) ;
+  return(T);
 }
