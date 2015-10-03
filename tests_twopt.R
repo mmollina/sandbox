@@ -176,11 +176,38 @@ t(sapply(ble, function(x) c(x[25,19], x[19,25])))
 print(x, mrk1="M1", mrk2 = "M19")
 
 t(sapply(ble, function(x) c(x[19,1], x[1,19])))
+
+
 print(x, mrk1="M13", mrk2 = "M19")
 t(sapply(ble, function(x) c(x[19,13], x[13,19])))
-
 sourceCpp("twopt_est_armadillo.cpp")
-#A<-matrix(sample(1:4, 500, replace = TRUE), 250,2)
-est_rf_arma(example.out$geno[,c(19,13)])
-table(A[,1], A[,2])
+
+A<-NULL
+segreg_type<-NULL
+for(i in 1:200)
+{
+  if(sample(1:2,1)==1)
+  {
+     x<-sample(1:3, 250, replace=TRUE, prob = c(.5,.25,.25))
+     segreg_type<-c(segreg_type, 2)
+  }
+  else
+  {
+    x<-sample(1:2, 250, replace=TRUE, prob = c(.75,.25))
+    segreg_type<-c(segreg_type, 5)
+  }
+  A<-cbind(A,x)
+}
+
+system.time(blo<-est_rf_arma(A, segreg_type = segreg_type, n_ind = 250))
+system.time(ble<-est_rf_out_new(A, segreg_type = segreg_type, n_ind = 250))
+
+
+
+
+
+
+
+
+
 
