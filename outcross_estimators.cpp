@@ -459,26 +459,88 @@ Rcpp::NumericVector rf_B1_C(Rcpp::NumericMatrix n,
   r(3)=abs(1.0-r(0));  
   return(r);
 }
+Rcpp::NumericVector rf_B1_D1(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n(3,2)+n(3,1)+n(2,2)+n(2,1)+n(1,2)+n(1,1));
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=(rold*(n(3,2)+n(3,1)+n(2,2)+n(2,1)+n(1,2)+n(1,1))+
+	    n(3,1)+n(2,1)+n(1,2))/(2.0*(n_ind-mis));
+    }
+  r(0)=rnew;
+  l=(n(3,1)+n(2,1)+n(1,2))*log(rnew)+(n(3,2)+n(2,2)+n(1,1))*log(1-rnew);
+  r(4)=r(7)=(l-l0)/log(10.0); /*transforming to base 10 logarithm*/
+  rold=0, rnew=0.01;	       
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=(rold*(n(3,2) + n(3,1) + n(2,2) + n(2,1) + n(1,2) + n(1,1))
+	    + n(3,1) + n(2,1) + n(1,2))/(2.0*(n_ind-mis));
+    }
+  r(1)=rnew;
+  l=(n(3,1)+n(2,1)+n(1,2))*log(rnew)+(n(3,2)+n(2,2)+n(1,1))*log(1-rnew);
+  r(5)=r(6)=(l-l0)/log(10.0); /*transforming to base 10 logarithm*/
+  r(2)=abs(1.0-r(1));
+  r(3)=abs(1.0-r(0));  
+  return(r);
+}
+
 
 /*
-rf_B1_D1
-rf_B1_D2
-rf_B2_B2
-rf_B2_B3
-rf_B2_C
-rf_B2_D1
-rf_B2_D2
-rf_B3_B3
-rf_B3_C
-rf_B3_D1
-rf_B3_D2
-rf_C_C
-rf_C_D1
-rf_C_D2
-rf_D1_D1
-rf_D1_D2
-rf_D2_D2
+Rcpp::NumericVector rf_X_X(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, l02, rnew, rold;
+  //Likelihoods under h0: r=0.5
+  l01 = 
+    //EM algorithm
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=(
+	    
+	    
+	    
+	    )/(2.0*(n_ind-mis));
+    }
+  r(0)=rnew;
+  l=
+    
+    
+    
+    
+    r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  rold=0, rnew=0.01;	       
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=(
+	    
+	    
+	    )/(2.0*(n_ind-mis));
+      
+    }
+  r(1)=rnew;
+  l=
+
+
+
+    r(5)=r(6)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  r(2)=abs(1.0-r(1));
+  r(3)=abs(1.0-r(0));  
+  return(r);
+}
 */
-
-
-

@@ -85,268 +85,69 @@ N32: submatrix(4,N4, 3,4);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: title   start ]
-Markers type A
+General procedure
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: comment start ]
-Likelihood
+To obtain the likelihood and the EM steps
    [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-TCC : kronecker_product(MC,MC)$
-lTCC : log(TCC)$
-ratsimp(I4.(lTCC*N4).I4);
-lTCR : log(kronecker_product(MC,MR))$
-ratsimp(I4.(lTCR*N4).I4);
-lTRC : log(kronecker_product(MR,MC))$
-ratsimp(I4.(lTRC*N4).I4);
-lTRR : log(kronecker_product(MR,MR))$
-ratsimp(I4.(lTRR*N4).I4);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-DCC: kronecker_sum(DC,DC);
-(I4.((DCC*TCC*N4)/TCC).I4)/(I4.N4.I4);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: hide output   ] */
-/* [wxMaxima: comment start ]
-M step
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: input   start ] */
-rCC:(((n43+n42+n34+n31+n24+n21+n13+n12)+2*(n41+n32+n23+n14))/ (n11+n12+n13+n14+n21+n22+n23+n24+n31+n32+n33+n34+n41+n42+n43+n44));
-
-rCR:(((n44+n41+n33+n32+n23+n22+n14+n11)+2*(n42+n31+n24+n13))/ (n11+n12+n13+n14+n21+n22+n23+n24+n31+n32+n33+n34+n41+n42+n43+n44));
-
-rRC:(((n44+n41+n33+n32+n23+n22+n14+n11)+2*(n43+n34+n21+n12))/ (n11+n12+n13+n14+n21+n22+n23+n24+n31+n32+n33+n34+n41+n42+n43+n44));
-
-rRR:(((n43+n42+n34+n31+n24+n21+n13+n12)+2*(n44+n33+n22+n11))/ (n11+n12+n13+n14+n21+n22+n23+n24+n31+n32+n33+n34+n41+n42+n43+n44));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: title   start ]
-Markers type A with B
-   [wxMaxima: title   end   ] */
 
 /* [wxMaxima: comment start ]
-A with B1
+Insert the types of the two markers
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Ik:IA$ Ik1:IB1$
+Ik:IA; Ik1:IB1;
+Il:I4;
+Ir:I3;
+N:N43;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+
 T:kronecker_product(MC,MC)$
 D: kronecker_sum(DC,DC)$
 H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lH: log(H)$
-ratsimp(I4.(lH*N43).I3);
+print("")$
+print("COUPLE-COUPLE")$
+print("Likelihood--------------------------------------------------------------------------------------------------")$
+ratsimp(Il.(lH*N).Ir);
+print("")$
+print("Likelihood under H0-----------------------------------------------------------------------------------------")$
+l1:factor(subst(.5, r, Il.(lH*N).Ir));
 M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I4.((M*N43)/H).I3)/(2*(I4.N43.I3))$
+rnew: (Il.((M*N)/H).Ir)/(2*(Il.N.Ir))$
+print("")$
+print("E step------------------------------------------------------------------------------------------------------")$
 factor(rnew);
-print("---------------------------------")$
+print("")$
+
 T:kronecker_product(MC,MR)$
 D: kronecker_sum(DC,DR)$
 H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lH: log(H)$
-ratsimp(I4.(lH*N43).I3);
+print("")$
+print("COUPLE-COUPLE")$
+print("Likelihood--------------------------------------------------------------------------------------------------")$
+ratsimp(Il.(lH*N).Ir);
+print("")$
+print("Likelihood under H0-----------------------------------------------------------------------------------------")$
+l1:factor(subst(.5, r, Il.(lH*N).Ir));
 M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I4.((M*N43)/H).I3)/(2*(I4.N43.I3))$
+rnew: (Il.((M*N)/H).Ir)/(2*(Il.N.Ir))$
+print("")$
+print("E step------------------------------------------------------------------------------------------------------")$
 factor(rnew);
-print("---------------------------------")$
-T:kronecker_product(MR,MC)$
-D: kronecker_sum(DR,DC)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I4.(lH*N43).I3);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I4.((M*N43)/H).I3)/(2*(I4.N43.I3))$
-factor(rnew);
-print("---------------------------------")$
-T:kronecker_product(MR,MR)$
-D: kronecker_sum(DR,DR)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I4.(lH*N43).I3);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I4.((M*N43)/H).I3)/(2*(I4.N43.I3))$
-factor(rnew);
-print("---------------------------------")$
+print("")$
+print("")$
+print("Are likelihoods under H0 equal? (zero if yes) --------------------------------------------------------------")$
+l1-l2;
 /* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: comment start ]
-A with B2
-   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Ik:IA$ Ik1:IB2$
-T:kronecker_product(MC,MC)$
-D: kronecker_sum(DC,DC)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I4.(lH*N43).I3);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I4.((M*N43)/H).I3)/(2*(I4.N43.I3))$
-factor(rnew);
-print("---------------------------------")$
-T:kronecker_product(MC,MR)$
-D: kronecker_sum(DC,DR)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I4.(lH*N43).I3);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I4.((M*N43)/H).I3)/(2*(I4.N43.I3))$
-factor(rnew);
-print("---------------------------------")$
-T:kronecker_product(MR,MC)$
-D: kronecker_sum(DR,DC)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I4.(lH*N43).I3);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I4.((M*N43)/H).I3)/(2*(I4.N43.I3))$
-factor(rnew);
-print("---------------------------------")$
-T:kronecker_product(MR,MR)$
-D: kronecker_sum(DR,DR)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I4.(lH*N43).I3);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I4.((M*N43)/H).I3)/(2*(I4.N43.I3))$
-factor(rnew);
-print("---------------------------------")$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-Ik:IB1$ Ik1:IB3$
-T:kronecker_product(MC,MC)$
-D: kronecker_sum(DC,DC)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-(I3.(lH*N33).I3);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
-(rnew);
-print("---------------------------------")$
-T:kronecker_product(MC,MR)$
-D: kronecker_sum(DC,DR)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I3.(lH*N33).I3);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
-(rnew);
-print("---------------------------------")$
-T:kronecker_product(MR,MC)$
-D: kronecker_sum(DR,DC)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I3.(lH*N33).I3)$
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
-factor(rnew)$
-print("---------------------------------")$
-T:kronecker_product(MR,MR)$
-D: kronecker_sum(DR,DR)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I3.(lH*N33).I3)$
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N33)/H).I3)/(2*(I3.N33.I3))$
-factor(rnew)$
-print("---------------------------------")$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-Ik:IB1$ Ik1:IC$
-T:kronecker_product(MC,MC)$
-D: kronecker_sum(DC,DC)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I3.(lH*N32).I2);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
-factor(rnew);
-print("---------------------------------")$
-T:kronecker_product(MC,MR)$
-D: kronecker_sum(DC,DR)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I3.(lH*N32).I2);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
-factor(rnew);
-print("---------------------------------")$
-T:kronecker_product(MR,MC)$
-D: kronecker_sum(DR,DC)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I3.(lH*N32).I2);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
-factor(rnew);
-print("---------------------------------")$
-T:kronecker_product(MR,MR)$
-D: kronecker_sum(DR,DR)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I3.(lH*N32).I2);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
-factor(rnew);
-print("---------------------------------")$
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-ratsimp(n12*r^4+n11*r^4+n22*r^3+n21*r^3−2*n12*r^3−4*n11*r^3−2*n31*r^2−3*n22*r^2−n21*r^2+4*n11*r^2+2*n31*r+3*n22*r−2*n21*r+n12*r−3*n11*r−2*n31−2*n22−2*n12);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-subst(.5, r, n21*log(r^2−r+1)+n31*log(2*r−r^2)+n22*log(r−r^2)+n12*log(r/2)+n11*log(−(r−2)/2)+2*n32*log(1−r));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-(r+1)*(r^2−r+1);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-ratsimp(%);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-ratsimp(n12*r^4+n11*r^4+n32*r^3+n31*r^3−2*n12*r^3−4*n11*r^3−3*n32*r^2−n31*r^2−2*n21*r^2+4*n11*r^2+3*n32*r−2*n31*r+2*n21*r+n12*r−3*n11*r−2*n32−2*n21−2*n12);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-Ik:IB1$ Ik1:IC$
-T:kronecker_product(MC,MC)$
-D: kronecker_sum(DC,DC)$
-H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
-lH: log(H)$
-ratsimp(I3.(lH*N32).I2);
-M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
-rnew: (I3.((M*N32)/H).I2)/(2*(I3.N32.I2))$
-factor(rnew);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-n11:15;
-n12:17;
-n21:16;
-n22:11;
-n31:16;
-n32:14;
-r:.01;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-n21*log(r^2−r+1)+n31*log(2*r−r^2)+n22*log(r−r^2)+n12*log(r/2)+n11*log(−(r−2)/2)+2*n32*
-log(1−r);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-(n12*r^4+n11*r^4+n22*r^3+n21*r^3−2*n12*r^3−4*n11*r^3−2*n31*r^2−3*n22*r^2−n21*r^2+4*n11*r^2+2*
-n31*r+3*n22*r−2*n21*r+n12*r−3*n11*r−2*n31−2*n22−2*n12)/(2*(n32+n31+n22+n21+n12+n11)*
-(r−2)*(r^2−r+1));
+factor(subst(.5, r, Il.(lH*N).Ir));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -354,20 +155,7 @@ Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-matrix([(2*r^2+(1−r)*r)/2+(1−r)*r,r^2+((1−r)*r)/2],[2*r^2+(1−r)*r,(1−r)*r],[2*r^2+2*(1−r)*r,0]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-r;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-(I3.((M*N32)/H).I2);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-(n11*((2*r^2+(1−r)*r)/2+(1−r)*r))/((r^2+(1−r)*r+(1−r)^2)/2+(2*(1−r)*r+(1−r)^2)/2)+(n31*(2*r^2+2*(1−r)*r))/(r^2+2*(1−r)*r)+(n21*(2*r^2+(1−r)*r))/(r^2+(1−r)*r+(1−r)^2)+(n12*(r^2+((1−r)*r)/2))/(r^2/2+((1−r)*r)/2)+
-n22;
+(Ir.((M*N)/H).Ir)/(2*(Il.N.Ir))$
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

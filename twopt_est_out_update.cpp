@@ -67,6 +67,9 @@ SEXP est_rf_out_new(NumericVector x, NumericVector segreg_type, NumericVector n_
 	    case 5: 
 	      r=rf_B1_C(n,n_ind, n(0,0));	      /*Markers B1 - c*/
 	      break;	    
+	    case 6: 
+	      r=rf_B1_D1(n,n_ind, n(0,0));	      /*Markers B1 - D1*/
+	      break;	    
 	    }
 	    break;
 	  case 3:
@@ -111,6 +114,10 @@ SEXP est_rf_out_new(NumericVector x, NumericVector segreg_type, NumericVector n_
 	    case 1: 
 	      n=transpose_counts(n);
 	      r=rf_A_D1(n,n_ind, n(0,0));	      /*Markers D1 - A*/
+	      break;	    
+	    case 2: 
+	      n=transpose_counts(n);
+	      r=rf_B1_D1(n,n_ind, n(0,0));	      /*Markers D1 - B1*/
 	      break;	    
 	    }
 	    break;
