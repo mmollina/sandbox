@@ -82,6 +82,7 @@ N43: submatrix(N4, 4)$
 N33: submatrix(4, N4, 4)$
 N42: submatrix(N4, 3,4);
 N32: submatrix(4,N4, 3,4);
+N22: submatrix(3,4,N4, 3,4);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: title   start ]
@@ -97,10 +98,10 @@ Insert the types of the two markers
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-Ik:IA; Ik1:IB1;
-Il:I4;
-Ir:I3;
-N:N43;
+Ik:ID2; Ik1:ID2;
+Il:I2;
+Ir:I2;
+N:N22;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -111,16 +112,18 @@ H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)
 lH: log(H)$
 print("")$
 print("COUPLE-COUPLE")$
-print("Likelihood--------------------------------------------------------------------------------------------------")$
-ratsimp(Il.(lH*N).Ir);
-print("")$
-print("Likelihood under H0-----------------------------------------------------------------------------------------")$
-l1:factor(subst(.5, r, Il.(lH*N).Ir));
 M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
 rnew: (Il.((M*N)/H).Ir)/(2*(Il.N.Ir))$
 print("")$
 print("E step------------------------------------------------------------------------------------------------------")$
 factor(rnew);
+print("")$
+print("Likelihood--------------------------------------------------------------------------------------------------")$
+ratsimp(Il.(lH*N).Ir);
+print("")$
+print("Likelihood under H0-----------------------------------------------------------------------------------------")$
+subst(.5, r, Il.(lH*N).Ir);
+l1:factor(subst(.5, r, Il.(lH*N).Ir));
 print("")$
 
 T:kronecker_product(MC,MR)$
@@ -128,34 +131,26 @@ D: kronecker_sum(DC,DR)$
 H : Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*(T.transpose(Ik1)))$
 lH: log(H)$
 print("")$
-print("COUPLE-COUPLE")$
-print("Likelihood--------------------------------------------------------------------------------------------------")$
-ratsimp(Il.(lH*N).Ir);
-print("")$
-print("Likelihood under H0-----------------------------------------------------------------------------------------")$
-l1:factor(subst(.5, r, Il.(lH*N).Ir));
+print("COUPLE-REPULSION")$
 M: Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)))$
 rnew: (Il.((M*N)/H).Ir)/(2*(Il.N.Ir))$
 print("")$
 print("E step------------------------------------------------------------------------------------------------------")$
 factor(rnew);
 print("")$
+print("Likelihood--------------------------------------------------------------------------------------------------")$
+ratsimp(Il.(lH*N).Ir);
+print("")$
+print("Likelihood under H0-----------------------------------------------------------------------------------------")$
+l2:factor(subst(.5, r, Il.(lH*N).Ir));
+print("")$
 print("")$
 print("Are likelihoods under H0 equal? (zero if yes) --------------------------------------------------------------")$
-l1-l2;
-/* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
-factor(subst(.5, r, Il.(lH*N).Ir));
+ratsimp(abs(l1)-abs(l2));
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-Ik.(((U.transpose(Ik1))/transpose(Ik).Ik.U.transpose(Ik1))*((T*D).transpose(Ik1)));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-(Ir.((M*N)/H).Ir)/(2*(Il.N.Ir))$
+
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

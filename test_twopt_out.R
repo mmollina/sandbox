@@ -14,6 +14,32 @@ names(s)<-colnames(example.out$geno)
 
 sourceCpp("twopt_est_out_update.cpp")
 y<-est_rf_out_new(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind)
-a<-print(x, mrk1="M19", mrk2 = "M22")
-(b<-t(sapply(y, function(x) c(x[19,22], x[22,19]))))
+a<-print(x, mrk1="M12", mrk2 = "M14")
+(b<-t(sapply(y, function(x) c(x[14,12], x[12,14]))))
 round(a-b,5)
+
+geno<-NULL
+segrega.type<-sample(c(1:7), size=10000, replace=TRUE)
+for(i in segrega.type)
+{
+  if(i==1)
+    geno<-cbind(geno,sample(1:4, size=250, replace=TRUE))
+  else if(i==2)
+    geno<-cbind(geno,sample(1:3, size=250, replace=TRUE, prob = c(.5,.25,.25)))
+  else if(i==3)
+    geno<-cbind(geno,sample(1:3, size=250, replace=TRUE, prob = c(.5,.25,.25)))
+  else if(i==4)
+    geno<-cbind(geno,sample(1:3, size=250, replace=TRUE, prob = c(.25,.5,.25)))
+  else if(i==5)
+    geno<-cbind(geno,sample(1:2, size=250, replace=TRUE, prob = c(.75,.25)))
+  else if(i==6)
+    geno<-cbind(geno,sample(1:2, size=250, replace=TRUE, prob = c(.5,.5)))
+  else if(i==7)
+    geno<-cbind(geno,sample(1:2, size=250, replace=TRUE, prob = c(.5,.5)))
+}
+system.time(y<-est_rf_out_new(x=geno, segreg_type = segrega.type, n = 250))
+
+speed<-function(nmar) choose(nmar,2) * 1.2894e-05
+curve(speed, 10, 10000)
+speed(1000)
+

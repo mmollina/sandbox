@@ -84,9 +84,7 @@ Rcpp::NumericVector rf_A_A(Rcpp::NumericMatrix n,
   l=(n2+n1)*log((1-r(1))*r(1))+2.0*(n4)*log(r(1))+2.0*(n3)*log(1-r(1));
   r(5)=r(6)=(l-l0)/log(10.0); /*transforming to base 10 logarithm*/
   r(2)=abs(1.0-r(1));
-
   r(3)=abs(1.0-r(0));
-  
   return(r);
 }
 Rcpp::NumericVector rf_A_B1(Rcpp::NumericMatrix n,
@@ -466,7 +464,7 @@ Rcpp::NumericVector rf_B1_D1(Rcpp::NumericMatrix n,
   NumericVector r(8);
   double l, l0, rnew, rold;
   /*Likelihoods under h0: r=0.5*/
-  l0 = -M_LN2*(n(3,2)+n(3,1)+n(2,2)+n(2,1)+n(1,2)+n(1,1));
+  l0 = -M_LN2*(n_ind-mis);
   /*EM algorithm*/
   rold=0;
   rnew=0.01;
@@ -476,24 +474,483 @@ Rcpp::NumericVector rf_B1_D1(Rcpp::NumericMatrix n,
       rnew=(rold*(n(3,2)+n(3,1)+n(2,2)+n(2,1)+n(1,2)+n(1,1))+
 	    n(3,1)+n(2,1)+n(1,2))/(2.0*(n_ind-mis));
     }
-  r(0)=rnew;
+  r(0)=r(1)=rnew;
+  r(2)=r(3)=abs(1.0-r(0));
   l=(n(3,1)+n(2,1)+n(1,2))*log(rnew)+(n(3,2)+n(2,2)+n(1,1))*log(1-rnew);
-  r(4)=r(7)=(l-l0)/log(10.0); /*transforming to base 10 logarithm*/
-  rold=0, rnew=0.01;	       
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); /*transforming to base 10 logarithm*/
+  return(r);
+}
+Rcpp::NumericVector rf_B1_D2(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
   while(abs(rold-rnew) > TOL)
     {
       rold=rnew;
-      rnew=(rold*(n(3,2) + n(3,1) + n(2,2) + n(2,1) + n(1,2) + n(1,1))
-	    + n(3,1) + n(2,1) + n(1,2))/(2.0*(n_ind-mis));
+      rnew=(rold*(n(3,2)+n(3,1)+n(2,2)+n(2,1)+2*(n(1,2)+n(1,1)))+
+		 n(3,1)+n(2,2))/(2.0*(n_ind-mis));
+    }
+  r(0)=r(2)=rnew;
+  r(1)=r(3)=abs(1.0-r(0));
+  l=(n(3,1)+n(2,2))*log(rnew)+(n(3,2)+n(2,1))*log(1-rnew)-M_LN2*(n(1,2) + n(1,1));
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); /*transforming to base 10 logarithm*/
+  return(r);
+}
+Rcpp::NumericVector rf_B2_B2(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(2.0*n(3,3)+2.0*n(3,2)+n(3,1)+2.0*n(2,3)+2.0*n(2,2)+n(2,1)+2.0*n(1,3)+2.0*n(1,2)+n(1,1));
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(3,1)+n(2,1)+n(1,3)+n(1,2)+n(1,1))*rold+
+	    n(3,2)+n(3,1)+n(2,3)+n(2,1)+n(1,3)+n(1,2))/(2.0*(n_ind-mis));
+    }
+  r(0)=rnew;
+  l=(n(3,2)+n(2,3))*log(rnew-rnew*rnew)+
+    (n(3,1)+n(2,1))*log(rnew)+(n(1,3)+n(1,2))*log(rnew/2.0)+
+    (2.0*n(3,3)+2.0*n(2,2)+n(1,1))*log(1-rnew);
+  r(4)=r(7)=(l-l0)/log(10.0); /*transforming to base 10 logarithm*/
+  rold=0, rnew=0.01;	     
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(3,1)+n(2,1)+n(1,3)+n(1,2)+n(1,1))*rold+2.0*(n(3,2)+n(2,3))+
+	    n(3,3)+n(2,2)+n(1,1))/(2.0*(n_ind-mis));
     }
   r(1)=rnew;
-  l=(n(3,1)+n(2,1)+n(1,2))*log(rnew)+(n(3,2)+n(2,2)+n(1,1))*log(1-rnew);
+  l=((n(3,3)+n(2,2))*log(rnew-rnew*rnew)+(2.0*(n(3,2)+n(2,3))+n(1,1))*log(rnew)+(n(1,3)+n(1,2))*log(-(rnew-1)/2)+(n(3,1)+n(2,1))*log(1-rnew));
   r(5)=r(6)=(l-l0)/log(10.0); /*transforming to base 10 logarithm*/
   r(2)=abs(1.0-r(1));
   r(3)=abs(1.0-r(0));  
   return(r);
 }
+Rcpp::NumericVector rf_B2_B3(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(2.0*n(3,3)+n(3,2)+2.0*n(3,1)+2.0*n(2,3)+n(2,2)+2.0*n(2,1)+2.0*n(1,3)+n(1,2)+2.0*n(1,1));
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((2.0*n(1,3)+4*n(1,2)+2.0*n(1,1))*rold*rold*rold+
+	    (2.0*n(3,2)+4*n(3,1)+2.0*n(2,3)+2.0*n(2,2)+2.0*n(2,1)-4*n(1,2)-2.0*n(1,1))*rold*rold+
+	    (-2.0*n(3,2)-4*n(3,1)-2.0*n(2,3)-2.0*n(2,1)-n(1,3)+2.0*n(1,2)+n(1,1))*rold+
+	    n(3,2)+2.0*n(3,1)+n(2,3)+n(2,1)+n(1,3))/
+	(2.0*(n_ind-mis)*(2.0*(rold*rold)-2.0*rold+1));
+    }
+  r(0)=rnew;
+  l=n(2,2)*log(2*rnew*rnew-2*rnew+1)+(n(2,3)+n(2,1))*log(rnew-rnew*rnew)+n(3,2)*log(2*rnew-2*rnew*rnew)+2*n(3,1)*log(rnew)+n(1,3)*log(rnew/2)+n(1,1)*log(-(rnew-1)/2)+2*n(3,3)*log(1-rnew)-M_LN2*n(1,2);
 
+  r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  rold=0, rnew=0.01;	    
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((2*n(1,3)+4*n(1,2)+2*n(1,1))*rold*rold*rold+
+	    (2*n(3,3)+2*n(3,2)+2*n(3,1)+4*n(2,3)+2*n(2,2)-2*n(1,3)-4*n(1,2))*rold*rold+
+	    (-2*n(3,3)-2*n(3,1)-4*n(2,3)-2*n(2,2)+n(1,3)+2*n(1,2)-n(1,1))*rold+
+	    n(3,3)+n(3,1)+2*n(2,3)+n(2,2)+n(1,1))/
+	(2.0*(n_ind-mis)*(2.0*(rold*rold)-2.0*rold+1));
+    }
+  r(1)=rnew;
+  l=n(3,2)*log(2*(rnew*rnew)-2*rnew+1)+
+    (n(3,3)+n(3,1))*log(rnew-(rnew*rnew))+
+    n(2,2)*log(2*rnew-2*(rnew*rnew))+
+    2*n(2,3)*log(rnew)+n(1,1)*log(rnew/2)+
+    n(1,3)*log(-(rnew-1)/2)+
+    2*n(2,1)*log(1-rnew)-
+    M_LN2*n(1,2);
+  r(5)=r(6)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  r(2)=abs(1.0-r(1));
+  r(3)=abs(1.0-r(0));  
+
+  return(r);
+}
+Rcpp::NumericVector rf_B2_C(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  //Likelihoods under h0: r=0.5
+  l0 = LN_75*(n(3,1) + n(2,1) + n(1,1)) - 2.0*M_LN2*(n(3,2) + n(2,2) + n(1,2));
+  //EM algorithm
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(1,2)+n(1,1))*rold*rold*rold*rold+
+	    (n(2,2)+n(2,1)-2.0*n(1,2)-4*n(1,1))*rold*rold*rold+
+	    (-2.0*n(3,1)-3*n(2,2)-n(2,1)+4*n(1,1))*rold*rold+
+	    (2.0*n(3,1)+3*n(2,2)-2.0*n(2,1)+n(1,2)-3*n(1,1))*rold-
+	    2.0*n(3,1)-2.0*n(2,2)-2.0*n(1,2))/(2.0*(n_ind-mis) * (rold-2.0)*((rold*rold)-rold+1));
+    }
+  r(0)=rnew;
+  l=n(2,1)*log((rnew*rnew)-rnew+1)+n(3,1)*log(2.0*rnew-(rnew*rnew))+
+    n(2,2)*log(rnew-(rnew*rnew))+n(1,2)*log(rnew/2.0)+n(1,1)*log(-(rnew-2)/2)+
+    2.0*n(3,2)*log(1-rnew);
+    r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  rold=0, rnew=0.01;	       
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(1,2)+n(1,1))*rold*rold*rold*rold+
+	    (n(3,2)+n(3,1)+2.0*n(2,2)+2.0*n(2,1)+2.0*n(1,1))*rold*rold*rold+
+	    (2.0*n(3,1)-2.0*n(2,1)-2.0*n(1,1))*rold*rold+
+	    (n(3,1)+2.0*n(2,1)+n(1,2)+3*n(1,1))*rold+
+	    n(3,2)+2.0*n(2,2))/(2.0*(n_ind-mis) * (rold+1.0)*((rold*rold)-rold+1));
+    }
+  r(1)=rnew;
+  l=n(3,1)*log(rnew*rnew-rnew+1)+
+    n(3,2)*log(rnew-rnew*rnew)+
+    n(2,1)*log(1-rnew*rnew)+
+    n(1,1)*log((rnew+1)/2)+
+    2.0*n(2,2)*log(rnew)+
+    n(1,2)*log(-(rnew-1)/2.0);
+  r(5)=r(6)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  r(2)=abs(1.0-r(1));
+  r(3)=abs(1.0-r(0));  
+  return(r);
+}
+Rcpp::NumericVector rf_B2_D1(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(3,2)+n(3,1)+n(2,2)+n(2,1)+2*n(1,2)+2*n(1,1))*rold+n(3,1)+n(2,2))/(2.0*(n_ind-mis));
+    }
+  r(0)=r(1)=rnew;
+  r(2)=r(3)=abs(1.0-r(0));
+  l=(n(3,1)+n(2,2))*log(rnew)+(n(3,2)+n(2,1))*log(1-rnew)-M_LN2*(n(1,2)+n(1,1));
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  return(r);
+}
+Rcpp::NumericVector rf_B2_D2(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(3,2)+n(3,1)+n(2,2)+n(2,1)+n(1,2)+n(1,1))*rold+n(3,1)+n(2,1)+n(1,2))/(2.0*(n_ind-mis));
+    }
+  r(0)=r(2)=rnew;
+  r(1)=r(3)=abs(1.0-r(0));
+  l=(n(3,1)+n(2,1)+n(1,2))*log(rnew)+(n(3,2)+n(2,2)+n(1,1))*log(1-rnew);
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  return(r);
+}
+Rcpp::NumericVector rf_B3_B3(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  //Likelihoods under h0: r=0.5
+  l0 = -M_LN2*(2*n(3,3)+n(3,2)+2*n(3,1)+2*n(2,3)+n(2,2)+2*n(2,1)+2*n(1,3)+n(1,2)+2*n(1,1));
+    //EM algorithm
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((2*n(3,2)+4*n(3,1)+2*n(2,3)+2*n(2,2)+2*n(2,1)+4*n(1,3)+2*n(1,2))*rold*rold+
+	    (-2*n(3,2)-4*n(3,1)-2*n(2,3)-2*n(2,1)-4*n(1,3)-2*n(1,2))*rold+
+	    n(3,2)+2*n(3,1)+n(2,3)+n(2,1)+2*n(1,3)+n(1,2))/
+	(2.0*(n_ind-mis)*(2*(rold*rold)-2*rold+1));
+    }
+  r(0)=rnew;
+  l=n(2,2)*log(2*(rnew*rnew)-2*rnew+1)+(n(2,3)+n(2,1))*log(rnew-(rnew*rnew))+
+    (n(3,2)+n(1,2))*log(2*rnew-2*(rnew*rnew))+(2*n(3,1)+2*n(1,3))*log(rnew)+
+    (2*n(3,3)+2*n(1,1))*log(1-rnew);
+    r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+    rold=0, rnew=0.01;	       
+    while(abs(rold-rnew) > TOL)
+      {
+	rold=rnew;
+	rnew=((2*n(3,3)+2*n(3,2)+2*n(3,1)+2*n(2,3)+2*n(2,2)+2*n(2,1)+2*n(1,3)+2*n(1,2)+2*n(1,1))*rold*rold+
+	      (-2*n(3,3)-2*n(3,1)-2*n(2,2)-2*n(1,3)-2*n(1,1))*rold+
+	      n(3,3)+n(3,1)+n(2,2)+n(1,3)+n(1,1))/
+	  (2.0*(n_ind-mis)*(2*(rold*rold)-2*rold+1));      
+      }
+    r(2)=r(1)=rnew;
+    l=(n(3,2)+n(1,2))*log(2*(rnew*rnew)-2*rnew+1)+(n(2,3)+n(2,1))*log((2*(rnew*rnew)-2*rnew+1)/2)+
+      (n(3,3)+n(3,1)+n(1,3)+n(1,1))*log(rnew-(rnew*rnew))+n(2,2)*log(2*rnew-2*(rnew*rnew));
+  r(5)=r(6)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  r(3)=abs(1.0-r(0));  
+  return(r);
+}
+Rcpp::NumericVector rf_B3_C(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  //Likelihoods under h0: r=0.5
+  l0 = LN_75*(n(3,1)+n(2,1)+n(1,1)) - 2*M_LN2*(n(3,2)+n(2,2)+n(1,2));
+  //EM algorithm
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(2,2)+n(2,1)+2*n(1,2)+2*n(1,1))*rold*rold*rold*rold+
+	    (-2*n(3,1)-2*n(2,2)-4*n(1,2)-6*n(1,1))*rold*rold*rold+
+	    (6*n(1,1)-3*n(2,1))*rold*rold+
+	    (n(2,2)-2*n(2,1)+2*n(1,2)-4*n(1,1))*rold-
+	    2*n(3,1)-2*n(2,2)-4*n(1,2))/
+	(2.0*(n_ind-mis)*((rold-2)*(rold+1)*((rold*rold)-rold+1)));
+    }
+  r(0)=rnew;
+  l=n(2,1)*log(rnew*rnew-rnew+1)+
+    n(3,1)*log(2*rnew-rnew*rnew)+
+    n(2,2)*log(rnew-(rnew*rnew))+
+    n(1,1)*log(1-(rnew*rnew))+
+    2*n(1,2)*log(rnew)+2*n(3,2)*log(1-rnew);
+    r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+    rold=0, rnew=0.01;	       
+    while(abs(rold-rnew) > TOL)
+      {
+	rold=rnew;
+	rnew=((4*n(3,2)+4*n(3,1)+4*n(2,2)+4*n(2,1)+4*n(1,2)+4*n(1,1))*rold*rold*rold*rold*rold*rold+
+	      (-12*n(3,2)-4*n(3,1)-8*n(2,2)-16*n(2,1)-12*n(1,2)-4*n(1,1))*rold*rold*rold*rold*rold+
+	      (16*n(3,2)-4*n(3,1)+6*n(2,2)+26*n(2,1)+16*n(1,2)-4*n(1,1))*rold*rold*rold*rold+
+	      (-12*n(3,2)+4*n(3,1)-2*n(2,2)-26*n(2,1)-12*n(1,2)+4*n(1,1))*rold*rold*rold+
+	      (3*n(3,2)-n(3,1)-2*n(2,2)+14*n(2,1)+3*n(1,2)-n(1,1))*rold*rold+
+	      (n(3,2)-n(3,1)-4*n(2,1)+n(1,2)-n(1,1))*rold-
+	      n(3,2)-n(1,2))/(2*(n_ind-mis)*((rold*rold)-rold+1)*(2*(rold*rold)-2*rold-1)*(2*(rold*rold)-2*rold+1));
+      }
+    r(2)=r(1)=rnew;
+    l=n(2,2)*log((2*(rnew*rnew)-2*rnew+1)/2)+
+      n(2,1)*log(-(2*(rnew*rnew)-2*rnew-1)/2)+
+      (n(3,1)+n(1,1))*log((rnew*rnew)-rnew+1)+
+      (n(3,2)+n(1,2))*log(rnew-(rnew*rnew));
+  r(5)=r(6)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  r(3)=abs(1.0-r(0));  
+  return(r);
+}
+Rcpp::NumericVector rf_B3_D1(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(3,2)+n(3,1)+2*n(2,2)+2*n(2,1)+n(1,2)+n(1,1))*rold+n(3,1)+n(1,2))/(2.0*(n_ind-mis));
+    }
+  r(0)=r(1)=rnew;
+  r(2)=r(3)=abs(1.0-r(0));
+  l=(n(3,1)+n(1,2))*log(rnew)+(n(3,2)+n(1,1))*log(1-rnew)-log(2)*n(2,2)-log(2)*n(2,1);
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  return(r);
+}
+Rcpp::NumericVector rf_B3_D2(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(3,2)+n(3,1)+2*n(2,2)+2*n(2,1)+n(1,2)+n(1,1))*rold+n(3,1)+n(1,2))/(2.0*(n_ind-mis));
+    }
+  r(0)=r(2)=rnew;
+  r(1)=r(3)=abs(1.0-r(0));
+  l=(n(3,1)+n(1,2))*log(rnew)+(n(3,2)+n(1,1))*log(1-rnew)-log(2)*n(2,2)-log(2)*n(2,1);
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  return(r);
+}
+Rcpp::NumericVector rf_C_C(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  //Likelihoods under h0: r=0.5
+  l0 = LN_75*(n(2,1)+n(1,1))-2*M_LN2*(n(2,2)+n(1,2));
+  //EM algorithm
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=-((n(2,1)+n(1,2)-2*n(1,1))*rold*rold+
+	     (-2*n(2,1)-2*n(1,2)+4*n(1,1))*rold+
+	     3*n(2,1)+3*n(1,2))/
+	((n_ind-mis)*(rold-2)*((rold*rold)-2*rold+3));
+    }
+  r(0)=rnew;
+  l=n(1,1)*log(((rnew*rnew)-2*rnew+3)/3)+
+    n(1,2)*log(-((rnew*rnew)-2*rnew)/3)+
+    n(2,1)*log(2*rnew-(rnew*rnew))+
+    2*n(2,2)*log(1-rnew);
+  r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  rold=0, rnew=0.01;	       
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(2,2)+n(2,1)+n(1,2)+n(1,1))*rold*rold*rold*rold+
+	    (-2*n(2,2)-6*n(1,1))*rold*rold*rold+
+	    (-3*n(2,1)-3*n(1,2)+6*n(1,1))*rold*rold+
+	    (n(2,2)-2*n(2,1)-2*n(1,2)-5*n(1,1))*rold
+	    -2*n(2,2))/(2.0*(n_ind-mis)*(rold-2)*(rold+1)*((rold*rold)-rold+1));
+    }
+  r(2)=r(1)=rnew;
+  l=n(2,1)*log((rnew*rnew)-rnew+1)+
+    n(1,2)*log(((rnew*rnew)-rnew+1)/3)+
+    n(1,1)*log(-((rnew*rnew)-rnew-2)/3)+
+    n(2,2)*log(rnew-(rnew*rnew));
+  r(5)=r(6)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  r(3)=abs(1.0-r(0));  
+  return(r);
+}
+Rcpp::NumericVector rf_C_D1(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(2,2)+n(2,1)+n(1,2)+n(1,1))*rold*rold*rold+
+	    (-n(2,2)+n(1,2)-2*n(1,1))*rold*rold+
+	    (-2*n(2,2)-3*n(2,1)-6*n(1,2)-3*n(1,1))*rold-2*n(2,1))/
+	(2.0*(n_ind-mis)*(rold-2)*(rold+1));
+    }
+  r(0)=r(1)=rnew;
+  r(2)=r(3)=abs(1.0-r(0));
+  l=n(1,2)*log((rnew+1)/3)+n(2,1)*log(rnew)+n(1,1)*log(-(rnew-2)/3)+n(2,2)*log(1-rnew);
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  return(r);
+}
+Rcpp::NumericVector rf_C_D2(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=((n(2,2)+n(2,1)+n(1,2)+n(1,1))*rold*rold*rold+
+	    (-n(2,2)+n(1,2)-2*n(1,1))*rold*rold+
+	    (-2*n(2,2)-3*n(2,1)-6*n(1,2)-3*n(1,1))*rold-2*n(2,1))/
+	(2.0*(n_ind-mis)*(rold-2)*(rold+1));
+    }
+  r(0)=r(2)=rnew;
+  r(1)=r(3)=abs(1.0-r(0));
+  l=n(1,2)*log((rnew+1)/3)+n(2,1)*log(rnew)+n(1,1)*log(-(rnew-2)/3)+n(2,2)*log(1-rnew);
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  return(r);
+}
+Rcpp::NumericVector rf_D1_D1(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=(n(2,2)*rold+n(2,1)*rold+n(1,2)*rold+n(1,1)*rold+n(2,1)+n(1,2))/
+	(2.0*(n_ind-mis));
+    }
+  r(0)=r(1)=rnew;
+  r(2)=r(3)=abs(1.0-r(0));
+  l=(n(2,1)+n(1,2))*log(rnew)+(n(2,2)+n(1,1))*log(1-rnew);
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  return(r);
+}
+Rcpp::NumericVector rf_D2_D2(Rcpp::NumericMatrix n,
+			     int n_ind,
+			     int mis)
+{
+  NumericVector r(8);
+  double l, l0, rnew, rold;
+  /*Likelihoods under h0: r=0.5*/
+  l0 = -M_LN2*(n_ind-mis);
+  /*EM algorithm*/
+  rold=0;
+  rnew=0.01;
+  while(abs(rold-rnew) > TOL)
+    {
+      rold=rnew;
+      rnew=(n(2,2)*rold+n(2,1)*rold+n(1,2)*rold+n(1,1)*rold+n(2,1)+n(1,2))/
+	(2.0*(n_ind-mis));
+    }
+  r(0)=r(2)=rnew;
+  r(1)=r(3)=abs(1.0-r(0));
+  l=(n(2,1)+n(1,2))*log(rnew)+(n(2,2)+n(1,1))*log(1-rnew);
+  r(5)=r(6)=r(4)=r(7)=(l-l0)/log(10.0); //transforming to base 10 logarithm
+  return(r);
+}
 
 /*
 Rcpp::NumericVector rf_X_X(Rcpp::NumericMatrix n,
@@ -501,9 +958,9 @@ Rcpp::NumericVector rf_X_X(Rcpp::NumericMatrix n,
 			     int mis)
 {
   NumericVector r(8);
-  double l, l0, l02, rnew, rold;
+  double l, l0, rnew, rold;
   //Likelihoods under h0: r=0.5
-  l01 = 
+  l0 = 
     //EM algorithm
   rold=0;
   rnew=0.01;
