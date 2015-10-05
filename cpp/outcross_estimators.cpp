@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include "utils.h"
 using namespace Rcpp;
 using namespace std;
 #define TOL 1e-05
@@ -6,65 +7,6 @@ using namespace std;
 #define LN4 1.38629436111989
 #define LN_75 -0.28768207245178
 
-Rcpp::NumericMatrix transpose_counts(Rcpp::NumericMatrix n)
-{
-  int temp;
-  temp=n(1,2); n(1,2)=n(2,1); n(2,1)=temp;
-  temp=n(1,3); n(1,3)=n(3,1); n(3,1)=temp;
-  temp=n(1,4); n(1,4)=n(4,1); n(4,1)=temp;
-  temp=n(2,3); n(2,3)=n(3,2); n(3,2)=temp;
-  temp=n(2,4); n(2,4)=n(4,2); n(4,2)=temp;
-  temp=n(3,4); n(3,4)=n(4,3); n(4,3)=temp;
-  return(n);
-}
-Rcpp::NumericMatrix count_genotypes(Rcpp::NumericVector x,
-				    int i,
-				    int j,
-				    int n_ind)
-{
-  int mis=0;
-  NumericMatrix n(5,5);
-  std::fill(n.begin(), n.end(), 0);
-  mis=0;
-  for(int k=0; k < n_ind; k++)
-    {
-      if(x(i*n_ind+k)==1) 
-	{
-	  if (x(j*n_ind+k)==1) n(1,1)++;
-	  else if (x(j*n_ind+k)==2) n(1,2)++;
-	  else if (x(j*n_ind+k)==3) n(1,3)++;
-	  else if (x(j*n_ind+k)==4) n(1,4)++;
-	  else mis++;
-	}
-      else if(x(i*n_ind+k)==2) 
-	{
-	  if (x(j*n_ind+k)==1) n(2,1)++;
-	  else if (x(j*n_ind+k)==2) n(2,2)++;
-	  else if (x(j*n_ind+k)==3) n(2,3)++;
-	  else if (x(j*n_ind+k)==4) n(2,4)++;
-	  else mis++;
-	}
-      else if(x(i*n_ind+k)==3) 
-	{
-	  if (x(j*n_ind+k)==1) n(3,1)++;
-	  else if (x(j*n_ind+k)==2) n(3,2)++;
-	  else if (x(j*n_ind+k)==3) n(3,3)++;
-	  else if (x(j*n_ind+k)==4) n(3,4)++;
-	  else mis++;
-	}
-      else if(x(i*n_ind+k)==4) 
-	{
-	  if (x(j*n_ind+k)==1) n(4,1)++;
-	  else if (x(j*n_ind+k)==2) n(4,2)++;
-	  else if (x(j*n_ind+k)==3) n(4,3)++;
-	  else if (x(j*n_ind+k)==4) n(4,4)++;
-	  else mis++;
-	}
-      else mis++;
-    }
-  n(0,0)=mis;
-  return(n);
-}
 Rcpp::NumericVector rf_A_A(Rcpp::NumericMatrix n,
 			  int n_ind,
 			  int mis)

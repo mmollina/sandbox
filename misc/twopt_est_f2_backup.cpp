@@ -1,13 +1,14 @@
 #include <Rcpp.h>
+#include "utils.h"
 using namespace Rcpp;
 using namespace std;
 #define TOL 0.00001
 #define LN_75 -0.28768207245178 
 
 // [[Rcpp::export]]
-SEXP est_rf_f2(NumericVector x, int n_ind) {
+SEXP est_rf_f2_backup(NumericVector x, int n_ind) {
   //NumericVector n(14);
-  int n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13;
+  int n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, k1, k2;;
   double rold, rnew, r0, r1, r2, l, l0;
   NumericMatrix r(((int)x.size()/n_ind), ((int)x.size()/n_ind));  
   for(int i=0; i < (int)(x.size()/n_ind)-1; i++)
@@ -20,52 +21,55 @@ SEXP est_rf_f2(NumericVector x, int n_ind) {
 	  //std::fill(n.begin(), n.end(), 0);
 	  for(int k=0; k < n_ind; k++)
 	    {
-	      if(x(i*n_ind+k)==1) 
-		{
-		  if (x(j*n_ind+k)==1) n1++;
-		  else if (x(j*n_ind+k)==2) n2++;
-		  else if (x(j*n_ind+k)==3) n3++;
-		  else if (x(j*n_ind+k)==4) n4++;
-		  else if (x(j*n_ind+k)==5) n5++;
-		  else n0++;
+	      k1=x(i*n_ind+k); k2=x(j*n_ind+k);
+	      switch(k1){
+	      case 1:
+		switch(k2){
+		case 1: n1++; break;
+		case 2: n2++; break;
+		case 3: n3++; break;
+		case 4: n4++; break;
+		case 5: n5++; break;
+		default: n0++; break;
 		}
-	      else if(x(i*n_ind+k)==2) 
-		{
-		  if (x(j*n_ind+k)==1) n6++;
-		  else if (x(j*n_ind+k)==2) n7++;
-		  else if (x(j*n_ind+k)==3) n6++;
-		  else if (x(j*n_ind+k)==4) n8++;
-		  else if (x(j*n_ind+k)==5) n8++;
-		  else n0++;
+	      case 2: 
+		switch(k2){
+		case 1: n6++; break;
+		case 2: n7++; break;
+		case 3: n6++; break;
+		case 4: n8++; break;
+		case 5: n8++; break;
+		default: n0++; break;
 		}
-	      else if(x(i*n_ind+k)==3) 
-		{
-		  if (x(j*n_ind+k)==1) n3++;
-		  else if (x(j*n_ind+k)==2) n2++;
-		  else if (x(j*n_ind+k)==3) n1++;
-		  else if (x(j*n_ind+k)==4) n5++;
-		  else if (x(j*n_ind+k)==5) n4++;
-		  else n0++;
+	      case 3: 
+		switch(k2){
+		case 1: n3++; break;
+		case 2: n2++; break;
+		case 3: n1++; break;
+		case 4: n5++; break;
+		case 5: n4++; break;
+		default: n0++; break;
 		}
-	      else if(x(i*n_ind+k)==4) 
-		{
-		  if (x(j*n_ind+k)==1) n9++;
-		  else if (x(j*n_ind+k)==2) n10++;
-		  else if (x(j*n_ind+k)==3) n11++;
-		  else if (x(j*n_ind+k)==4) n12++;
-		  else if (x(j*n_ind+k)==5) n13++;
-		  else n0++;
+	      case 4:
+		switch(k2){
+		case 1: n9++; break;
+		case 2: n10++; break;
+		case 3: n11++; break;
+		case 4: n12++; break;
+		case 5: n13++; break;
+		default: n0++; break;
 		}
-	      else if(x(i*n_ind+k)==5) 
-		{
-		  if (x(j*n_ind+k)==1) n11++;
-		  else if (x(j*n_ind+k)==2) n10++;
-		  else if (x(j*n_ind+k)==3) n9++;
-		  else if (x(j*n_ind+k)==4) n13++;
-		  else if (x(j*n_ind+k)==5) n12++;
-		  else n0++;
+	      case 5:
+		switch(k2){
+		case 1: n11++; break;
+		case 2: n10++; break;
+		case 3: n9++; break;
+		case 4: n13++; break;
+		case 5: n12++; break;
+		default: n0++; break;
 		}
-	      else n0++;
+	      default: n0++; break;
+	      }
 	    }
 	  //n=count_genotypes_f2( x, i, j, n_ind);
 	  //EM algorithm
@@ -115,12 +119,3 @@ SEXP est_rf_f2(NumericVector x, int n_ind) {
     }
   return wrap(r);
 }
-
-
-
-
-
-
-
-
-

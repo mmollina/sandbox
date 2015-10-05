@@ -12,8 +12,21 @@ names(s)<-colnames(example.out$geno)
 ##----------------------------------------------------------------------------------------------------------------------
 ##----------------------------------------------------------------------------------------------------------------------
 
-sourceCpp("cpp/twopt_est_out.cpp")
-y<-est_rf_out_new(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind)
+sourceCpp("cpp/twopt_est_out_old.cpp")
+sourceCpp("cpp/twopt_est_out_new.cpp")
+
+z1<-z2<-numeric(100)
+for(i in 1:100)
+{ 
+  print(i)
+  z1[i]<-system.time(y1<-est_rf_out_old(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind))[3]
+  z2[i]<-system.time(y2<-est_rf_out_new(x=example.out$geno, segreg_type = example.out$segr.type.num, n = example.out$n.ind))[3]
+}
+
+summary(z1)
+summary(z2)
+
+
 a<-print(x, mrk1="M12", mrk2 = "M14")
 (b<-t(sapply(y, function(x) c(x[14,12], x[12,14]))))
 round(a-b,5)
@@ -40,6 +53,6 @@ for(i in segrega.type)
 z<-system.time(y<-est_rf_out_new(x=geno, segreg_type = segrega.type, n = 250))
 
 speed<-function(nmar) choose(nmar,2) * z[3]/choose(1000,2)
-curve(speed, 10, 10000)
+curve(speed, 10, 10000, col="red", lwd=2)
 speed(20000)
 

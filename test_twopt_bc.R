@@ -16,6 +16,5 @@ for(i in 1:nmar)
 z<-system.time(y<-est_rf_bc(x=geno, n_ind = nind))
 
 speed<-function(nmar) choose(nmar,2) * z[3]/choose(1000,2)
-curve(speed, 10, 10000,add = TRUE, col=2)
+curve(speed, 10, 10000,add = TRUE, col="red", lwd=2)
 speed(20000)
-
