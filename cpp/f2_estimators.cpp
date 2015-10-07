@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 using namespace std;
-#define TOL 0.00001
+#define TOL 1e-6
 #define LN_75 -0.28768207245178 
 
 Rcpp::NumericVector est_rf_C_C(std::vector<int> k_sub,
@@ -19,12 +19,13 @@ Rcpp::NumericVector est_rf_C_C(std::vector<int> k_sub,
 	  else if (k1_sub[k]==2) n2++;
 	  else if (k1_sub[k]==3) n3++;
 	  else n0++;
+
 	}
       else if(k_sub[k]==2) 
 	{
-	  if (k1_sub[k]==1) n4++;
-	  else if (k1_sub[k]==2) n5++;
-	  else if (k1_sub[k]==3) n4++;
+	  if (k1_sub[k]==1) n2++;
+	  else if (k1_sub[k]==2) n4++;
+	  else if (k1_sub[k]==3) n2++;
 	  else n0++;
 	}
       else if(k_sub[k]==3) 
@@ -40,16 +41,13 @@ Rcpp::NumericVector est_rf_C_C(std::vector<int> k_sub,
   while(abs(rold-rnew) > TOL)
     {
       rold=rnew;
-      rnew=((n2 + n4)+2*(n3 + n5*rold*rold/((1-rold)*(1-rold)+rold*rold)))/(2*(n_ind-n0));
+      rnew=(n2+2*(n3+n4*rold*rold/((1-rold)*(1-rold)+rold*rold)))/(2*(n_ind-n0));
     }
   //Likelihood
-  l=n1 * 2.0*log(1.0-rnew) + 
-    n2  *  M_LN2 + log(rnew) + log(1.0-rnew) + 
-    n4  *  log(rnew*(1.0-rnew)) + 
-    n5 * log(rnew*rnew+(1.0-rnew)*(1.0-rnew)) + 
-    n3 * 2.0*log(rnew);
+  l=n4*log(rnew*rnew+(1-rnew)*(1-rnew))+
+    2*n3*log(rnew)+n2*log(rnew*(1-rnew))+2*n1*log(1-rnew);
   //Likelihood unde H0: r=0.5
-  l0=-M_LN2*(n5-n2+2.0*(n4+n3+n1)+2);
+  l0=-M_LN2*(n4+2.0*n3+2.0*n2+2*n1);
   r(0)=rnew;
   r(1)=(l-l0)/log(10.0); //transforming to base 10 logarithm
   return(r);

@@ -6,7 +6,7 @@ file<-paste(system.file("example",package="onemap"),"fake.f2.onemap.raw", sep="/
 dat1 <- read.cross("mm", file=file, mapfile="fake.f2.onemap.map")
 data(fake.f2.onemap)
 fake.f2.onemap$geno.mmk[[1]][[1]][is.na(fake.f2.onemap$geno.mmk[[1]][[1]])]<-0
-dat1<-est.rf(dat1, tol =  0.00001)
+dat1<-est.rf(dat1, tol =  10e-10)
 r.qtl<-dat1$rf
 colnames(r.qtl)
 diag(r.qtl)<-NA
@@ -14,23 +14,20 @@ diag(r.qtl)<-NA
 geno<-fake.f2.onemap$geno.mmk[[1]][,colnames(r.qtl)]
 geno[is.na(geno)]<-0
 
-
-y1<-est_rf_f2(x=as.numeric(, n = fake.f2.onemap$n.ind)
-
-sourceCpp("cpp/twopt_est_f2.cpp")
-
-z1<-z2<-numeric(100)
-for(i in 1:100)
-{
-    z1[i]<-system.time(y1<-est_rf_f2(x=as.numeric(fake.f2.onemap$geno.mmk[[1]][,colnames(r.qtl)]), n = fake.f2.onemap$n.ind))[3]
-    z2[i]<-system.time(y2<-est_rf_f2_backup(x=as.numeric(fake.f2.onemap$geno.mmk[[1]][,colnames(r.qtl)]), n = fake.f2.onemap$n.ind))[3]
+check.type<-function(x){
+ a<-paste(sort(unique(x[!x==0])), collapse = "")
+ if(a=="123") return(1)
+ else if(a=="34") return(2)
+ else if (a=="15") return(3)
+ else return(4)
 }
 
-summary(z1)
-summary(z2)
+sourceCpp("cpp/twopt_est_f2.cpp")
+type<-apply(geno, 2, check.type)
+type
+y1<-est_rf_f2(x=as.numeric(geno), type = type,  n = fake.f2.onemap$n.ind)
 
-round(r.qtl-y1,5)
-round(r.qtl-y2,5)
+image(round(r.qtl-y1,2))
 
 geno<-NULL
 nmar<-1000
