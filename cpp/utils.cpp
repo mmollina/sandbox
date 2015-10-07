@@ -1,6 +1,8 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 using namespace std;
+#define TOL 0.00001
+#define LN_75 -0.28768207245178 
 
 Rcpp::NumericMatrix transpose_counts(Rcpp::NumericMatrix n)
 {

@@ -14,10 +14,12 @@ SEXP est_rf_bc(NumericVector x, int n_ind) {
       for(int j=(i+1); j  < (int)x.size()/n_ind; j++)
         {
 	  nr=mis=0;
+	  std::vector<int> k_sub(&x[i*n_ind],&x[i*n_ind+n_ind]);
+	  std::vector<int> k1_sub(&x[j*n_ind],&x[j*n_ind+n_ind]);
           for(int k=0; k < n_ind; k++)
             {
-              if((x(i*n_ind+k) + x(j*n_ind+k))==3) nr++;
-	      else if(x(i*n_ind+k)==0 || x(j*n_ind+k)==0) mis++;
+              if((k_sub[k] + k1_sub[k])==3) nr++;
+	      else if(k_sub[k]==0 || k1_sub[k]==0) mis++;
 	    }
 	  rtemp=nr/(n_ind-mis);
 	  l=(n_ind-(mis+nr))*log(1-rtemp)+nr*log(rtemp);

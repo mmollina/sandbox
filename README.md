@@ -10,5 +10,4 @@ Testing environment for untested code and outright experimentation.
 
 ## Efficiency of the two-point procedure
 
-Inline-style: 
 ![alt text](https://github.com/mmollina/sandbox/blob/master/two_point_performence.png "efficiency of the two-point procedure")

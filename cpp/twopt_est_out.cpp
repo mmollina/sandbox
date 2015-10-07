@@ -1,5 +1,4 @@
 #include <Rcpp.h>
-#include "utils.h"
 #include "outcross_estimators.h"
 using namespace Rcpp;
 using namespace std;
@@ -18,40 +17,42 @@ SEXP est_rf_out(NumericVector x, NumericVector segreg_type, int n_ind) {
       R_CheckUserInterrupt(); /* check for ^C */
       for(int j=(i+1); j  < n_mar; j++)
         {
-	  std::fill(r.begin(), r.end(), 0);
+	  std::vector<int> k_sub(&x[i*n_ind],&x[i*n_ind+n_ind]);
+	  std::vector<int> k1_sub(&x[j*n_ind],&x[j*n_ind+n_ind]);	     
 	  std::fill(n.begin(), n.end(), 0);
+	  std::fill(r.begin(), r.end(), 0);
 	  for(int k=0; k < n_ind; k++)
 	    {
-	      if(x(i*n_ind+k)==1) 
+	      if(k_sub[k]==1) 
 		{
-		  if (x(j*n_ind+k)==1) n(1,1)++;
-		  else if (x(j*n_ind+k)==2) n(1,2)++;
-		  else if (x(j*n_ind+k)==3) n(1,3)++;
-		  else if (x(j*n_ind+k)==4) n(1,4)++;
+		  if (k1_sub[k]==1) n(1,1)++;
+		  else if (k1_sub[k]==2) n(1,2)++;
+		  else if (k1_sub[k]==3) n(1,3)++;
+		  else if (k1_sub[k]==4) n(1,4)++;
 		  else n(0,0)++;
 		}
-	      else if(x(i*n_ind+k)==2) 
+	      else if(k_sub[k]==2) 
 		{
-		  if (x(j*n_ind+k)==1) n(2,1)++;
-		  else if (x(j*n_ind+k)==2) n(2,2)++;
-		  else if (x(j*n_ind+k)==3) n(2,3)++;
-		  else if (x(j*n_ind+k)==4) n(2,4)++;
+		  if (k1_sub[k]==1) n(2,1)++;
+		  else if (k1_sub[k]==2) n(2,2)++;
+		  else if (k1_sub[k]==3) n(2,3)++;
+		  else if (k1_sub[k]==4) n(2,4)++;
 		  else n(0,0)++;
 		}
-	      else if(x(i*n_ind+k)==3) 
+	      else if(k_sub[k]==3) 
 		{
-		  if (x(j*n_ind+k)==1) n(3,1)++;
-		  else if (x(j*n_ind+k)==2) n(3,2)++;
-		  else if (x(j*n_ind+k)==3) n(3,3)++;
-		  else if (x(j*n_ind+k)==4) n(3,4)++;
+		  if (k1_sub[k]==1) n(3,1)++;
+		  else if (k1_sub[k]==2) n(3,2)++;
+		  else if (k1_sub[k]==3) n(3,3)++;
+		  else if (k1_sub[k]==4) n(3,4)++;
 		  else n(0,0)++;
 		}
-	      else if(x(i*n_ind+k)==4) 
+	      else if(k_sub[k]==4) 
 		{
-		  if (x(j*n_ind+k)==1) n(4,1)++;
-		  else if (x(j*n_ind+k)==2) n(4,2)++;
-		  else if (x(j*n_ind+k)==3) n(4,3)++;
-		  else if (x(j*n_ind+k)==4) n(4,4)++;
+		  if (k1_sub[k]==1) n(4,1)++;
+		  else if (k1_sub[k]==2) n(4,2)++;
+		  else if (k1_sub[k]==3) n(4,3)++;
+		  else if (k1_sub[k]==4) n(4,4)++;
 		  else n(0,0)++;
 		}
 	      else n(0,0)++;
@@ -252,7 +253,6 @@ SEXP est_rf_out(NumericVector x, NumericVector segreg_type, int n_ind) {
 	      n=transpose_counts(n);
 	      r=rf_D2_D2(n,n_ind, n(0,0));	      /*Markers D2 -  D2*/
 	      break;	
-    
 	    }
 	    break;
 	  }
