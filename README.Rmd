@@ -7,7 +7,7 @@ output:
     keep_md: yes
 ---
 
-This document repots teh advences on the two point proceduers to be implemented into the newer version of OneMap. Since this is my experimental repository, the functions presented here need an extra amount of work to be incorporated into the OneMap package. Also, their are not documented.
+This document reports the advances on the two point procedures to be implemented into the newer version of OneMap. Since this is my experimental repository, the functions presented here need an extra amount of work to be incorporated into the OneMap package. Also, their are not documented.
 
 First, let us load the **Rcpp** package, some C++ functions:
 
@@ -39,7 +39,7 @@ dat.out<-sim.pop.out(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, missing = mi
 dat.out                                                                                                                                       ## A: B1:B2:B3:C:D1:D2
 ```
 
-Obtaining recombination fractions (under the diagonal) and LOD Scores (above the diagonal). To obtain the recombination fractions and its heatmaps I used just the lower triangle. 
+Obtaining recombination fractions (under the diagonal) and LOD Scores (above the diagonal). To obtain the recombination fractions and its heat maps I used just the lower triangle. 
 
 ```{r}
 z.bc<-system.time(y.bc<-est_rf_bc(x=dat.bc$geno, n = dat.bc$n.ind))
@@ -56,9 +56,9 @@ image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3,
 
 ```
 
-It is clear that the estimation procedure is OK. The **F2** `heatmap` shown some inconsistences near the diagonal, but they are caused by dominant markers in repulsion phase. I checked with R/qtl and the older version of OneMap and the values are correct. The **Outcross** heatmap shown some empty cells buit they are caused by the combination `D1--D2` markers. 
+It is clear that the estimation procedure is OK. The **F2** `heatmap` shows some inconsistencies near the diagonal, but they are caused by dominant markers in repulsion phase. I checked with R/qtl and the older version of OneMap and the values are correct. In the **Outcross** heatmap it is possible to see some empty cells. In this case, they are caused by the combination `D1--D2` markers. 
 
-Now let us simulate datasets with 5.000 of markers, 10 chomosomes and 250 individuals. Norice that I also use the functions `find.bins`and `create.data.bins`, already implemented in the OneMap software, to group markers with reduntant information into bins.
+Now let us simulate datasets with 5.000 of markers, 10 chromosomes and 250 individuals. Notice that I also use the functions `find.bins`and `create.data.bins`, already implemented in the OneMap software, to group markers with redundant information into bins.
 
 ```{r}
 n.ind<-250 # 250 individuals
@@ -102,21 +102,25 @@ dat.bc.new$n.mar ##Number of markers
 (z.bc<-system.time(y.bc<-est_rf_bc(x=dat.bc.new$geno, n = dat.bc$n.ind)))
 mat.bc<-as.matrix(as.dist(y.bc, upper = TRUE))
 ##F2
-dat.bc.new$n.mar ##Number of markers
+dat.f2.new$n.mar ##Number of markers
 (z.f2<-system.time(y.f2<-est_rf_f2(x=dat.f2.new$geno, type = dat.f2.new$segr.type.num, n = dat.f2$n.ind)))
 mat.f2<-as.matrix(as.dist(y.f2, upper = TRUE))
 ##Outcross
 dat.out.new$n.mar ##Number of markers
 (z.out<-system.time(y.out<-est_rf_out(x=dat.out.new$geno, segreg_type =  dat.out.new$segr.type.num, n = dat.out$n.ind)))
 mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
-
-layout(matrix(1:3, ncol=3))
-image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3), main="Backcross" )
-image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3), main="F2")
-image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
 ```
 
-Evaluating the performace of the two-point procedures
+```{r, echo=FALSE}
+image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3), main="Backcross" )
+mtext(paste0("Number of pairs: ", choose(dat.bc.new$n.mar,2),   "      Elespsed time: ", round(z.bc[3],3), " seconds"), cex = .85)
+image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3), main="F2")
+mtext(paste0("Number of pairs: ", choose(dat.f2.new$n.mar,2),   "      Elespsed time: ", round(z.f2[3],3), " seconds"), cex = .85)
+image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
+mtext(paste0("Number of pairs: ", choose(dat.out.new$n.mar,2),   "      Elespsed time: ", round(z.out[3],3), " seconds"), cex = .85)
+```
+
+Evaluating the performance of the two-point procedures
 
 ```{r}
 speed.bc<-function(w) choose(w,2) * z.bc[3]/(60*choose(dat.bc.new$n.mar,2))
@@ -131,4 +135,12 @@ legend("topleft", legend = c("Outcross","F2",  "Backcross"),
        lty = c(1,2,1), xjust = 1, yjust = 1,
         col=c("red", "orange", "blue"))
 ```
+
+Notice that, in this case, the f2 procedure is less efficient than the outcross. This is caused by the dominant markers in repulsion present in the data. Since the simulation was performed with 60% of dominant markers, several them are in repulsion. In the outcross simulations, this type of configuration happens in a small proportion of the data (markers C in repulsion). This configuration is known as the worst case to estimate (low power) and the EM takes several iterations to converge.
+
+##Next steps
+
+1. Implement these codes in OneMap.
+2. Try to use some level of parallelizarion
+3. Adjust the codes and the objects (create classes, methods, etc) and see if works fine with the previous version of OneMap
 

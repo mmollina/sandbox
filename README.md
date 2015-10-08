@@ -2,7 +2,7 @@
 Marcelo Mollinari  
 October 7, 2015  
 
-This document repots teh advences on the two point proceduers to be implemented into the newer version of OneMap. Since this is my experimental repository, the functions presented here need an extra amount of work to be incorporated into the OneMap package. Also, their are not documented.
+This document reports the advances on the two point procedures to be implemented into the newer version of OneMap. Since this is my experimental repository, the functions presented here need an extra amount of work to be incorporated into the OneMap package. Also, their are not documented.
 
 First, let us load the **Rcpp** package, some C++ functions:
 
@@ -90,16 +90,16 @@ dat.out                                                                         
 ##     No. individuals:    5000 
 ##     No. markers:        100 
 ##     Segregation types:
-##        1:	10
-##        2:	14
-##        3:	16
-##        4:	19
-##        5:	14
-##        6:	12
-##        7:	15
+##        1:	11
+##        2:	17
+##        3:	7
+##        4:	15
+##        5:	19
+##        6:	14
+##        7:	17
 ```
 
-Obtaining recombination fractions (under the diagonal) and LOD Scores (above the diagonal). To obtain the recombination fractions and its heatmaps I used just the lower triangle. 
+Obtaining recombination fractions (under the diagonal) and LOD Scores (above the diagonal). To obtain the recombination fractions and its heat maps I used just the lower triangle. 
 
 
 ```r
@@ -116,11 +116,11 @@ image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, e
 image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
 ```
 
-![](teste_files/figure-html/unnamed-chunk-3-1.png) 
+![](README_files/figure-html/unnamed-chunk-3-1.png) 
 
-It is clear that the estimation procedure is OK. The **F2** `heatmap` shown some inconsistences near the diagonal, but they are caused by dominant markers in repulsion phase. I checked with R/qtl and the older version of OneMap and the values are correct. The **Outcross** heatmap shown some empty cells buit they are caused by the combination `D1--D2` markers. 
+It is clear that the estimation procedure is OK. The **F2** `heatmap` shows some inconsistencies near the diagonal, but they are caused by dominant markers in repulsion phase. I checked with R/qtl and the older version of OneMap and the values are correct. In the **Outcross** heatmap it is possible to see some empty cells. In this case, they are caused by the combination `D1--D2` markers. 
 
-Now let us simulate datasets with 5.000 of markers, 10 chomosomes and 250 individuals. Norice that I also use the functions `find.bins`and `create.data.bins`, already implemented in the OneMap software, to group markers with reduntant information into bins.
+Now let us simulate datasets with 5.000 of markers, 10 chromosomes and 250 individuals. Notice that I also use the functions `find.bins`and `create.data.bins`, already implemented in the OneMap software, to group markers with redundant information into bins.
 
 
 ```r
@@ -154,7 +154,7 @@ system.time(bins.bc<-find.bins(dat.bc,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   0.309   0.004   0.313
+##   0.299   0.000   0.298
 ```
 
 ```r
@@ -165,8 +165,8 @@ bins.bc
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       421 
-##     Average of markers per bin:              11.876 
+##     No. of bins found:                       436 
+##     Average of markers per bin:              11.468 
 ##     Type of search performed:                non exact
 ```
 
@@ -178,18 +178,18 @@ dat.bc.new
 ```
 ## This is an object of class 'bc.onemap'
 ##     No. individuals:     250 
-##     No. markers:         421 
+##     No. markers:         436 
 ##     Percent genotyped:   92 
 ## 
 ##     Number of markers per type:
-##        AA : AB --> 421 marker(s)
+##        AA : AB --> 436 marker(s)
 ## 
 ## This data contains no phenotypic information
 ```
 
 ```r
 ##F2
-dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 15, dom51 = 15, missing = mis, n.ch = n.ch, verbose = FALSE)
+dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 30, dom51 = 30, missing = mis, n.ch = n.ch, verbose = FALSE)
 dat.f2
 ```
 
@@ -200,9 +200,9 @@ dat.f2
 ##     Percent genotyped:   90 
 ## 
 ##     Number of markers per type:
-##        AA : AB : BB -->  3500
-##         Not BB : BB -->  750
-##         Not AA : AA -->  750
+##        AA : AB : BB -->  2000
+##         Not BB : BB -->  1500
+##         Not AA : AA -->  1500
 ## 
 ## This data contains no phenotypic information
 ```
@@ -213,7 +213,7 @@ system.time(bins.f2<-find.bins(dat.f2,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   1.652   0.002   1.654
+##   1.654   0.002   1.656
 ```
 
 ```r
@@ -224,8 +224,8 @@ bins.f2
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       1289 
-##     Average of markers per bin:              3.879 
+##     No. of bins found:                       1342 
+##     Average of markers per bin:              3.7258 
 ##     Type of search performed:                non exact
 ```
 
@@ -237,13 +237,13 @@ dat.f2.new
 ```
 ## This is an object of class 'f2.onemap'
 ##     No. individuals:     250 
-##     No. markers:         1289 
+##     No. markers:         1342 
 ##     Percent genotyped:   91 
 ## 
 ##     Number of markers per type:
-##        AA : AB : BB -->  733
-##         Not BB : BB -->  275
-##         Not AA : AA -->  281
+##        AA : AB : BB -->  630
+##         Not BB : BB -->  358
+##         Not AA : AA -->  354
 ## 
 ## This data contains no phenotypic information
 ```
@@ -259,13 +259,13 @@ dat.out
 ##     No. individuals:    250 
 ##     No. markers:        5000 
 ##     Segregation types:
-##        1:	703
-##        2:	725
-##        3:	700
-##        4:	697
-##        5:	743
-##        6:	732
-##        7:	700
+##        1:	743
+##        2:	761
+##        3:	696
+##        4:	740
+##        5:	695
+##        6:	694
+##        7:	671
 ```
 
 ```r
@@ -274,7 +274,7 @@ system.time(bins.out<-find.bins(dat.out,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   5.154   0.000   5.158
+##   5.220   0.003   5.226
 ```
 
 ```r
@@ -285,8 +285,8 @@ bins.out
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       2353 
-##     Average of markers per bin:              2.1249 
+##     No. of bins found:                       2443 
+##     Average of markers per bin:              2.0467 
 ##     Type of search performed:                non exact
 ```
 
@@ -298,15 +298,15 @@ dat.out.new
 ```
 ## This is an object of class 'outcross'
 ##     No. individuals:    250 
-##     No. markers:        2353 
+##     No. markers:        2443 
 ##     Segregation types:
-##        1:	399
-##        2:	364
-##        3:	348
-##        4:	412
-##        5:	290
-##        6:	283
-##        7:	257
+##        1:	424
+##        2:	373
+##        3:	359
+##        4:	426
+##        5:	291
+##        6:	292
+##        7:	278
 ```
 
 Estimating the recombination fraction between 5.000 markers for each population 
@@ -318,7 +318,7 @@ dat.bc.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 421
+## [1] 436
 ```
 
 ```r
@@ -327,17 +327,17 @@ dat.bc.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##   0.252   0.006   0.259
+##   0.267   0.000   0.266
 ```
 
 ```r
 mat.bc<-as.matrix(as.dist(y.bc, upper = TRUE))
 ##F2
-dat.bc.new$n.mar ##Number of markers
+dat.f2.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 421
+## [1] 1342
 ```
 
 ```r
@@ -346,7 +346,7 @@ dat.bc.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##   5.557   0.015   5.571
+##   6.255   0.035   6.294
 ```
 
 ```r
@@ -356,7 +356,7 @@ dat.out.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 2353
+## [1] 2443
 ```
 
 ```r
@@ -365,21 +365,16 @@ dat.out.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##  18.460   0.036  18.507
+##  19.588   0.073  19.669
 ```
 
 ```r
 mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
-
-layout(matrix(1:3, ncol=3))
-image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3), main="Backcross" )
-image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3), main="F2")
-image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
 ```
 
-![](teste_files/figure-html/unnamed-chunk-5-1.png) 
+![](README_files/figure-html/unnamed-chunk-6-1.png) ![](README_files/figure-html/unnamed-chunk-6-2.png) ![](README_files/figure-html/unnamed-chunk-6-3.png) 
 
-Evaluating the performace of the two-point procedures
+Evaluating the performance of the two-point procedures
 
 
 ```r
@@ -396,5 +391,13 @@ legend("topleft", legend = c("Outcross","F2",  "Backcross"),
         col=c("red", "orange", "blue"))
 ```
 
-![](teste_files/figure-html/unnamed-chunk-6-1.png) 
+![](README_files/figure-html/unnamed-chunk-7-1.png) 
+
+Notice that, in this case, the f2 procedure is less efficient than the outcross. This is caused by the dominant markers in repulsion present in the data. Since the simulation was performed with 60% of dominant markers, several them are in repulsion. In the outcross simulations, this type of configuration happens in a small proportion of the data (markers C in repulsion). This configuration is known as the worst case to estimate (low power) and the EM takes several iterations to converge.
+
+##Next steps
+
+1. Implement these codes in OneMap.
+2. Try to use some level of parallelizarion
+3. Adjust the codes and the objects (create classes, methods, etc) and see if works fine with the previous version of OneMap
 
