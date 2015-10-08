@@ -62,7 +62,7 @@ Now let us simulate datasets with 5.000 of markers, 10 chromosomes and 250 indiv
 
 ```{r}
 n.ind<-250 # 250 individuals
-n.mrk<-5000 # 20000 markers
+n.mrk<-5000 # 5000 markers
 n.ch<-10
 n.mrk.per.ch<-n.mrk/n.ch
 ch.len<-200 # 200 cM chromosome
@@ -94,7 +94,7 @@ dat.out.new
 
 ```
 
-Estimating the recombination fraction between 5.000 markers for each population 
+Estimating the recombination fraction between all markers for each population 
 
 ```{r}
 ##Backcross

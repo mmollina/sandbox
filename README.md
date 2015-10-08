@@ -90,13 +90,13 @@ dat.out                                                                         
 ##     No. individuals:    5000 
 ##     No. markers:        100 
 ##     Segregation types:
-##        1:	11
-##        2:	17
-##        3:	7
-##        4:	15
-##        5:	19
-##        6:	14
-##        7:	17
+##        1:	6
+##        2:	18
+##        3:	10
+##        4:	20
+##        5:	11
+##        6:	20
+##        7:	15
 ```
 
 Obtaining recombination fractions (under the diagonal) and LOD Scores (above the diagonal). To obtain the recombination fractions and its heat maps I used just the lower triangle. 
@@ -125,7 +125,7 @@ Now let us simulate datasets with 5.000 of markers, 10 chromosomes and 250 indiv
 
 ```r
 n.ind<-250 # 250 individuals
-n.mrk<-5000 # 20000 markers
+n.mrk<-5000 # 5000 markers
 n.ch<-10
 n.mrk.per.ch<-n.mrk/n.ch
 ch.len<-200 # 200 cM chromosome
@@ -154,7 +154,7 @@ system.time(bins.bc<-find.bins(dat.bc,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   0.299   0.000   0.298
+##   0.271   0.004   0.275
 ```
 
 ```r
@@ -165,8 +165,8 @@ bins.bc
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       436 
-##     Average of markers per bin:              11.468 
+##     No. of bins found:                       431 
+##     Average of markers per bin:              11.601 
 ##     Type of search performed:                non exact
 ```
 
@@ -178,11 +178,11 @@ dat.bc.new
 ```
 ## This is an object of class 'bc.onemap'
 ##     No. individuals:     250 
-##     No. markers:         436 
+##     No. markers:         431 
 ##     Percent genotyped:   92 
 ## 
 ##     Number of markers per type:
-##        AA : AB --> 436 marker(s)
+##        AA : AB --> 431 marker(s)
 ## 
 ## This data contains no phenotypic information
 ```
@@ -213,7 +213,7 @@ system.time(bins.f2<-find.bins(dat.f2,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   1.654   0.002   1.656
+##   1.613   0.000   1.611
 ```
 
 ```r
@@ -224,8 +224,8 @@ bins.f2
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       1342 
-##     Average of markers per bin:              3.7258 
+##     No. of bins found:                       1365 
+##     Average of markers per bin:              3.663 
 ##     Type of search performed:                non exact
 ```
 
@@ -237,13 +237,13 @@ dat.f2.new
 ```
 ## This is an object of class 'f2.onemap'
 ##     No. individuals:     250 
-##     No. markers:         1342 
+##     No. markers:         1365 
 ##     Percent genotyped:   91 
 ## 
 ##     Number of markers per type:
-##        AA : AB : BB -->  630
+##        AA : AB : BB -->  644
 ##         Not BB : BB -->  358
-##         Not AA : AA -->  354
+##         Not AA : AA -->  363
 ## 
 ## This data contains no phenotypic information
 ```
@@ -259,13 +259,13 @@ dat.out
 ##     No. individuals:    250 
 ##     No. markers:        5000 
 ##     Segregation types:
-##        1:	743
-##        2:	761
-##        3:	696
-##        4:	740
-##        5:	695
-##        6:	694
-##        7:	671
+##        1:	758
+##        2:	769
+##        3:	686
+##        4:	724
+##        5:	686
+##        6:	663
+##        7:	714
 ```
 
 ```r
@@ -274,7 +274,7 @@ system.time(bins.out<-find.bins(dat.out,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   5.220   0.003   5.226
+##   4.364   0.015   4.381
 ```
 
 ```r
@@ -285,8 +285,8 @@ bins.out
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       2443 
-##     Average of markers per bin:              2.0467 
+##     No. of bins found:                       2275 
+##     Average of markers per bin:              2.1978 
 ##     Type of search performed:                non exact
 ```
 
@@ -298,18 +298,18 @@ dat.out.new
 ```
 ## This is an object of class 'outcross'
 ##     No. individuals:    250 
-##     No. markers:        2443 
+##     No. markers:        2275 
 ##     Segregation types:
-##        1:	424
-##        2:	373
-##        3:	359
-##        4:	426
-##        5:	291
-##        6:	292
-##        7:	278
+##        1:	403
+##        2:	367
+##        3:	324
+##        4:	387
+##        5:	280
+##        6:	255
+##        7:	259
 ```
 
-Estimating the recombination fraction between 5.000 markers for each population 
+Estimating the recombination fraction between all markers for each population 
 
 
 ```r
@@ -318,7 +318,7 @@ dat.bc.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 436
+## [1] 431
 ```
 
 ```r
@@ -327,7 +327,7 @@ dat.bc.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##   0.267   0.000   0.266
+##   0.216   0.000   0.215
 ```
 
 ```r
@@ -337,7 +337,7 @@ dat.f2.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 1342
+## [1] 1365
 ```
 
 ```r
@@ -346,7 +346,7 @@ dat.f2.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##   6.255   0.035   6.294
+##   6.273   0.018   6.291
 ```
 
 ```r
@@ -356,7 +356,7 @@ dat.out.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 2443
+## [1] 2275
 ```
 
 ```r
@@ -365,7 +365,7 @@ dat.out.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##  19.588   0.073  19.669
+##  15.915   0.027  15.949
 ```
 
 ```r
