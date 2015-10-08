@@ -2,6 +2,7 @@
 using namespace Rcpp;
 using namespace std;
 #define TOL 0.00001
+#define rf_TOL 1e-50
 #define LN_5 log(1.0/2.0)
 
 // [[Rcpp::export]]
@@ -22,6 +23,7 @@ SEXP est_rf_bc(NumericVector x, int n_ind) {
 	      else if(k_sub[k]==0 || k1_sub[k]==0) mis++;
 	    }
 	  rtemp=nr/(n_ind-mis);
+	  if(rtemp < rf_TOL) rtemp=rf_TOL;
 	  l=(n_ind-(mis+nr))*log(1-rtemp)+nr*log(rtemp);
 	  l0=LN_5*(n_ind-mis);
 	  r(j,i)=rtemp;

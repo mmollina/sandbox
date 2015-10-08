@@ -1,0 +1,107 @@
+---
+title: 'Report: Two point precedures'
+author: "Marcelo Mollinari"
+date: "October 7, 2015"
+output: html_document
+---
+
+This document repots teh advences on the two point proceduers to be implemented into the newer version of OneMap. Since this is my experimental repository, the functions presented here need an extra amount of work to be incorporated into the OneMap package. Also, their are not documented.
+
+First, let us load the **Rcpp** package, some C++ functions:
+
+```{r}
+require(Rcpp)
+require(onemap)
+sourceCpp("cpp/twopt_est_out.cpp")
+sourceCpp("cpp/twopt_est_f2.cpp")
+sourceCpp("cpp/twopt_est_bc.cpp")
+```
+
+Simulating data with thousands of individuals. This allow us to verify if the EM is working properly for all cases:
+
+```{r}
+source("simulate_diploid_populations.R")
+n.ind<-5000 # 50000 individuals
+n.mrk<-100 # 100 markers
+ch.len<-200 # 200 cM chromosome
+mis<-10 #10% of missing data
+
+##Backcross
+dat.bc<-sim.pop.bc(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, missing = mis, n.ch = 1, verbose = FALSE)
+dat.bc
+##F2
+dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 20, dom51 =20, missing = mis, n.ch = 1, verbose = FALSE) ## 20 % of dom. markers not B
+  dat.f2                                                                                                                             ## 20 % of dom. markers not A
+##Outcross
+dat.out<-sim.pop.out(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, missing = mis, prob = c(1,1,1,1,1,1,1), n.ch = 1, verbose = FALSE) ## equal proportions of types of markers
+dat.out                                                                                                                                       ## A: B1:B2:B3:C:D1:D2
+```
+
+Obtaining recombination fractions (under the diagonal) and LOD Scores (above the diagonal). To obtain the recombination fractions and its heatmaps I used just the lower triangle. 
+
+```{r}
+z.bc<-system.time(y.bc<-est_rf_bc(x=dat.bc$geno, n = dat.bc$n.ind))
+mat.bc<-as.matrix(as.dist(y.bc, upper = TRUE))
+z.f2<-system.time(y.f2<-est_rf_f2(x=dat.f2$geno, type = dat.f2$segr.type.num, n = dat.f2$n.ind))
+mat.f2<-as.matrix(as.dist(y.f2, upper = TRUE))
+z.out<-system.time(y.out<-est_rf_out(x=dat.out$geno, segreg_type =  dat.out$segr.type.num, n = dat.out$n.ind))
+mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
+
+layout(matrix(1:3, ncol=3))
+image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3), main="Backcross" )
+image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3), main="F2")
+image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
+
+```
+
+It is clear that the estimation procedure is OK. The **F2** `heatmap` shown some inconsistences near the diagonal, but they are caused by dominant markers in repulsion phase. I checked with R/qtl and the older version of OneMap and the values are correct. The **Outcross** heatmap shown some empty cells buit they are caused by the combination `D1--D2` markers. 
+
+Now let us simulate datasets with 20.000 of markers, 10 chomosomes and 250 individuals
+
+```{r}
+n.ind<-250 # 250 individuals
+n.mrk<-20000 # 20000 markers
+n.ch<-10
+n.mrk.per.ch<-n.mrk/n.ch
+ch.len<-200 # 200 cM chromosome
+mis<-10 #10% of missing data
+
+##Backcross
+dat.bc<-sim.pop.bc(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, missing = mis, n.ch = n.ch, verbose = TRUE)
+dat.bc
+##F2
+dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 20, dom51 = 20, missing = mis, n.ch = 5, verbose = TRUE)
+dat.f2
+##Outcross
+dat.out<-sim.pop.out(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, missing = mis, prob=c(1,1,1,1,1,1,1), n.ch = n.ch, verbose = TRUE) 
+dat.out
+```
+
+Estimating the recombination fraction between 20.000 markers (199.990.000 recombination fractions) for each population 
+
+```{r}
+z.bc<-system.time(y.bc<-est_rf_bc(x=dat.bc$geno, n = dat.bc$n.ind))
+mat.bc<-as.matrix(as.dist(y.bc, upper = TRUE))
+z.f2<-system.time(y.f2<-est_rf_f2(x=dat.f2$geno, type = dat.f2$segr.type.num, n = dat.f2$n.ind))
+mat.f2<-as.matrix(as.dist(y.f2, upper = TRUE))
+z.out<-system.time(y.out<-est_rf_out(x=dat.out$geno, segreg_type =  dat.out$segr.type.num, n = dat.out$n.ind))
+mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
+
+layout(matrix(1:3, ncol=3))
+image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3), main="Backcross" )
+image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3), main="F2")
+image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
+```
+
+Evaluating the performace of the two-point procedures
+
+```{r}
+speed.bc<-function(w) choose(w,2) * z.bc[3]/choose(nmar,2)
+speed.f2<-function(w) choose(w,2) * z.f2[3]/choose(nmar,2)
+speed.out<-function(w) choose(w,2) * z.out[3]/choose(nmar,2)
+
+curve(speed.out, 1, n.mrk, col="red", lwd=2, xlab = "number of markers", ylab = "time in seconds")
+curve(speed.f2, 1, n.mrk, col="orange", lwd=2, add=TRUE)
+curve(speed.bc, 1, n.mrk, col="blue", lwd=2, add=TRUE)
+```
+

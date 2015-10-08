@@ -1,9 +1,48 @@
 require(onemap)
 require(Rcpp)
 require(qtl)
+source("general_simulation.R")
 sourceCpp("cpp/twopt_est_out.cpp")
 sourceCpp("cpp/twopt_est_f2.cpp")
 sourceCpp("cpp/twopt_est_bc.cpp")
+
+
+z.bc<-system.time(y.bc<-est_rf_bc(x=dat.bc, n = n.ind))
+mat.bc<-as.matrix(as.dist(y.bc, upper = TRUE))
+speed.bc<-function(w) choose(w,2) * z.bc[3]/choose(n.mar,2)
+
+##F2
+dat.f2<-sim.ch.f2(n.ind, n.mrk, ch.len, dom43 = 20, dom51 =20, missing = 10)
+dat.temp<-dat.f2
+dat.temp[dat.temp==0]<-NA
+check.type<-function(x)
+{
+    if(sum(is.na(match(na.omit(unique(x)), c(1,2,3))))==0) return(1)
+    else if (sum(is.na(match(na.omit(unique(x)), c(4,3))))==0) return(2)
+    else if (sum(is.na(match(na.omit(unique(x)), c(5,1))))==0) return(3)
+    else return(4)
+}
+type<-apply(dat.temp, 2, check.type)
+z.f2<-system.time(y.f2<-est_rf_f2(x=dat.f2, type = type, n = n.ind))
+mat.f2<-as.matrix(as.dist(y.f2, upper = TRUE))
+speed.f2<-function(w) choose(w,2) * z.f2[3]/choose(n.mar,2)
+
+##Backcross
+dat.out<-sim.ch.out(n.ind, n.mrk, ch.len, mis, prob=c(1,1,1,1,1,1,1))
+z.out<-system.time(y.out<-est_rf_out(x=dat.out[[1]], segreg_type =  dat.out[[2]], n = n.ind))
+mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
+speed.out<-function(w) choose(w,2) * z.bc[3]/choose(n.mar,2)
+
+
+image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3))
+image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3))
+image(mat.out[1:100,1:100], axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3))
+curve(speed, 10, 10000, col="red", lwd=2, xlab = "number of markers", ylab = "time in seconds")
+
+
+
+
+
 ############################
 nmar<-1000
 nind<-250

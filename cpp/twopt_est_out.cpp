@@ -236,7 +236,7 @@ SEXP est_rf_out(NumericVector x, NumericVector segreg_type, int n_ind) {
 	      break;
 	    case 3: 
 	      n=transpose_counts(n);
-	      r=rf_B1_D2(n,n_ind, n(0,0));	      /*Markers D2 -  B2*/
+	      r=rf_B2_D2(n,n_ind, n(0,0));	      /*Markers D2 -  B2*/
 	      break;	    
 	    case 4: 
 	      n=transpose_counts(n);
