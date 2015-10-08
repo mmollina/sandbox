@@ -47,7 +47,7 @@ sim.pop.bc<-function(n.ind, n.mrk, ch.len, missing=0, n.ch=1, verbose=TRUE)
     dat.mmk[dat.mmk==0]<-NA
     dat.mmk<-list(dat.mmk, type="bc")
     structure(list(geno = dat.final, geno.mmk = dat.mmk, n.ind = n.ind, n.mar = n.mrk,
-                   segr.type = NULL, segr.type.num=NULL, phase=NULL,
+                   segr.type = NA, segr.type.num=NA, phase=NA,
                    input="none.txt", n.phe=0, pheno = NA),  class = "bc.onemap")    
 }
 
@@ -97,7 +97,7 @@ sim.pop.f2<-function(n.ind, n.mrk, ch.len, dom43=0, dom51=0, missing=0, n.ch=1, 
     dat.mmk<-list(dat.mmk, type="f2")
     code<-c(-2,-2,-3)
     structure(list(geno = dat.final, geno.mmk = dat.mmk, n.ind = n.ind, n.mar = n.mrk,
-                   segr.type = NULL, segr.type.num=type, phase=code[type],
+                   segr.type = NA, segr.type.num=type, phase=code[type],
                    input="none.txt", n.phe=0, pheno = NA),  class = "f2.onemap")    
 }
 

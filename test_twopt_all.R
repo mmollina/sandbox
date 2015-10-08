@@ -101,3 +101,5 @@ legend("topleft", legend = c("Outcross","F2",  "Backcross"),
        lty = 1, xjust = 1, yjust = 1,
         col=c("red", "orange", "blue"))
 
+
+
