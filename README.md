@@ -397,7 +397,7 @@ Notice that, in this case, the f2 procedure is less efficient than the outcross.
 
 ##Next steps
 
-1. Implement these codes in OneMap.
-2. Try to use some level of parallelizarion
+1. Implement these codes in OneMap - work in progress.
+2. Try to use some level of parallelizarion - work in progress.
 3. Adjust the codes and the objects (create classes, methods, etc) and see if works fine with the previous version of OneMap
 
