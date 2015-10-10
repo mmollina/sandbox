@@ -144,3 +144,17 @@ Notice that, in this case, the f2 procedure is less efficient than the outcross.
 2. Try to use some level of parallelizarion
 3. Adjust the codes and the objects (create classes, methods, etc) and see if works fine with the previous version of OneMap
 
+##Stating faster HMM checks
+
+```{r}
+n.ind<-250 # 250 individuals
+n.mrk<-50 # 5000 markers
+n.ch<-1
+n.mrk.per.ch<-n.mrk/n.ch
+ch.len<-200 # 200 cM chromosome
+mis<-0 #10% of missing data
+dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 1, dom51 = 1, missing = mis, n.ch = n.ch, verbose = FALSE)
+sourceCpp("cpp/hmm_f2.cpp")
+system.time(z<-est_hmm_f2(Geno = t(dat.f2$geno), rf = rep(0.05, (n.mrk-1)),1))
+```
+
