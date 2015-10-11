@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "f2_estimators.h"
+#include "f2_est.h"
 using namespace Rcpp;
 using namespace std;
 

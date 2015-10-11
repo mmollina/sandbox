@@ -112,7 +112,7 @@ double addlog(double a, double b)
 }
 
 // [[Rcpp::export]]
-SEXP est_hmm_f2(NumericMatrix Geno, NumericVector rf, int verbose) {
+SEXP est_hmm_f2_new(NumericMatrix Geno, NumericVector rf, int verbose) {
   int n_mar = Geno.nrow();
   int n_ind = Geno.ncol();
   int n_gen = 4;
@@ -125,6 +125,9 @@ SEXP est_hmm_f2(NumericMatrix Geno, NumericVector rf, int verbose) {
   NumericMatrix gamma(n_gen, n_gen);
   NumericVector cur_rf(n_mar-1);
   NumericVector initf(4,0.25);
+
+  NumericMatrix tr(n_gen, (n_mar-1)*n_gen);
+
   for(it=0; it<maxit; it++) {
     //Rcpp::Rcout << "it: " << it << "\n";
     for(j=0; j<n_mar-1; j++) {
@@ -146,9 +149,18 @@ SEXP est_hmm_f2(NumericMatrix Geno, NumericVector rf, int verbose) {
       3. se for testar ordens parecidas nao precisa alocar tudo outra vez. 
          Isso é complicado de programar mas salva um bom tempo de processamento
     */
+    for(j=0; j < ((n_mar-1)*n_gen); j++)
+      {
+	//	Rcpp::Rcout << "into: " << (j%4)+1 << "   mat. n.: " << (j/4) << " --> ";
+	for(i=0; i<n_gen; i++) 
+	  {
+	    //  Rcpp::Rcout << i+1 << " ";
+	    tr(i,j)= stepf(i+1, (j%4)+1, cur_rf(j/4));
+	  }
+	//	Rcpp::Rcout << "\n";
+      }
 
-
-
+    //    Rcpp::Rcout << "Cheguei!";
     std::fill(rf.begin(), rf.end(), 0);
     for(i=0; i<n_ind; i++) { /* i = individual */
       R_CheckUserInterrupt(); /* check for ^C */
@@ -162,13 +174,13 @@ SEXP est_hmm_f2(NumericMatrix Geno, NumericVector rf, int verbose) {
       for(j=1,j2=n_mar-2; j<n_mar; j++, j2--) {
 
 	for(v=0; v<n_gen; v++) {
-	  alpha(v,j) = alpha(0,j-1) * stepf(1, v+1, cur_rf(j-1));
-	  beta(v,j2) = beta(0,j2+1) * stepf(v+1, 1, cur_rf(j2)) *
+	  alpha(v,j) = alpha(0,j-1) * tr(0, (j-1)*n_gen+v);
+	  beta(v,j2) = beta(0,j2+1) * tr(v, j2*4)*
 	    emitf(Geno(j2+1,i),1,error_prob);
 
 	  for(v2=1; v2<n_gen; v2++) {
-	    alpha(v,j) = alpha(v,j) + alpha(v2,j-1) * stepf(v2+1,v+1,cur_rf(j-1));
-	    beta(v,j2) = beta(v,j2) + beta(v2,j2+1) * stepf(v+1,v2+1,cur_rf(j2))  * emitf(Geno(j2+1,i),v2+1,error_prob);
+	    alpha(v,j) = alpha(v,j) + alpha(v2,j-1) * tr(v2,(j-1)*n_gen+v);
+	    beta(v,j2) = beta(v,j2) + beta(v2,j2+1) * tr(v, j2*n_gen+v2)  * emitf(Geno(j2+1,i),v2+1,error_prob);
 	  }
 
 	  alpha(v,j) *= emitf(Geno(j,i),v+1,error_prob);
@@ -183,7 +195,7 @@ SEXP est_hmm_f2(NumericMatrix Geno, NumericVector rf, int verbose) {
 	  for(v2=0; v2<n_gen; v2++) {
 	    gamma(v,v2) = alpha(v,j) * beta(v2,j+1) *
 	      emitf(Geno(j+1,i), v2+1, error_prob) *
-	      stepf(v+1, v2+1, cur_rf(j));
+	      tr(v, j*n_gen+v2);
 
 	    if(v==0 && v2==0) s = gamma(v,v2);
 	    else s = s + gamma(v,v2);
@@ -269,7 +281,7 @@ SEXP est_hmm_f2(NumericMatrix Geno, NumericVector rf, int verbose) {
     curloglik = alpha(0,n_mar-1);
     for(v=1; v<n_gen; v++)
       curloglik = curloglik + alpha(v,n_mar-1);
-    //Rcpp::Rcout << log(curloglik) << "\n";
+    // Rcpp::Rcout << log(curloglik) << "\n";
     loglik += log(curloglik);
   }
   List z = List::create(wrap(rf), wrap(loglik));

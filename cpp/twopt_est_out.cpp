@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "outcross_estimators.h"
+#include "out_est.h"
 using namespace Rcpp;
 using namespace std;
 
