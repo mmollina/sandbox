@@ -32,7 +32,7 @@ SEXP est_hmm_f2(NumericMatrix Geno, NumericVector rf, int verbose) {
   int n_ind = Geno.ncol();
   int n_gen = 4;
   int it, i, v, v2, j, j2, flag=0, maxit=1000;
-  double error_prob = 0.001;
+  double error_prob = 0.00001;
   double tol=1e-6, s=0.0; 
   double loglik, curloglik; 
   NumericMatrix alpha(n_gen, n_mar);
@@ -45,12 +45,16 @@ SEXP est_hmm_f2(NumericMatrix Geno, NumericVector rf, int verbose) {
 
   NumericMatrix em(6,4);
   em(0,0)=em(0,1)=em(0,2)=em(0,3)=1.0;
-  em(1,0)=1.0;
-  em(2,1)=em(2,2)=1.0;
-  em(3,3)=1.0;
-  em(4,0)=em(4,1)=em(4,2)=1.0;
-  em(5,1)=em(5,2)=em(5,3)=1.0;
-
+  em(1,0)=1.0-error_prob;
+  em(1,1)=em(1,2)=em(1,3)=error_prob/2.0;
+  em(2,1)=em(2,2)=1.0-error_prob;
+  em(2,0)=em(2,0)=error_prob/2.0;
+  em(3,3)=1.0-error_prob;
+  em(3,0)=em(3,1)=em(3,2)=error_prob/2.0;
+  em(4,0)=em(4,1)=em(4,2)=1.0-error_prob/2;
+  em(4,3)=error_prob;
+  em(5,1)=em(5,2)=em(5,3)=1.0-error_prob/2;;
+  em(5,0)=error_prob;
 
   for(it=0; it<maxit; it++) {
     //Rcpp::Rcout << "it: " << it << "\n";
