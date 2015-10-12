@@ -112,7 +112,7 @@ double addlog(double a, double b)
 }
 
 // [[Rcpp::export]]
-SEXP est_hmm_f2_brand_new(NumericMatrix Geno, NumericVector rf, int verbose) {
+SEXP est_hmm_f2_brand_new_new(NumericMatrix Geno, NumericVector rf, int verbose) {
   int n_mar = Geno.nrow();
   int n_ind = Geno.ncol();
   int n_gen = 4;
@@ -154,7 +154,8 @@ SEXP est_hmm_f2_brand_new(NumericMatrix Geno, NumericVector rf, int verbose) {
       R_CheckUserInterrupt(); /* check for ^C */
       /* initialize alpha and beta */
       for(v=0; v<n_gen; v++) {
-	alpha(v,0) = initf(v)  * em(Geno(0,i)-1, v);
+	if(em(Geno(0,i)-1, v) > 0)
+	  alpha(v,0) = initf(v)  * em(Geno(0,i)-1, v);
 	beta(v,n_mar-1) = 1.0;
       }
      
@@ -163,15 +164,17 @@ SEXP est_hmm_f2_brand_new(NumericMatrix Geno, NumericVector rf, int verbose) {
 
 	for(v=0; v<n_gen; v++) {
 	  alpha(v,j) = alpha(0,j-1) * tr(0, (j-1)*n_gen+v);
-	  beta(v,j2) = beta(0,j2+1) * tr(v, j2*4) * 
-	    em(Geno(j2+1,i)-1,0);
+	  if(em(Geno(j2+1,i)-1,0) > 0)
+	    beta(v,j2) = beta(0,j2+1) * tr(v, j2*4) * 
+	      em(Geno(j2+1,i)-1,0);
 
 	  for(v2=1; v2<n_gen; v2++) {
 	    alpha(v,j) = alpha(v,j) + alpha(v2,j-1) * tr(v2,(j-1)*n_gen+v);
-	    beta(v,j2) = beta(v,j2) + beta(v2,j2+1) * tr(v, j2*n_gen+v2)  * em(Geno(j2+1,i)-1,v2);
+	    if( em(Geno(j2+1,i)-1,v2) > 0)
+	      beta(v,j2) = beta(v,j2) + beta(v2,j2+1) * tr(v, j2*n_gen+v2)  * em(Geno(j2+1,i)-1,v2);
 	  }
-
-	  alpha(v,j) *= em(Geno(j,i)-1,v);
+	  if(em(Geno(j,i)-1,v) > 0)
+	    alpha(v,j) *= em(Geno(j,i)-1,v);
 	}
 
       }
@@ -181,10 +184,8 @@ SEXP est_hmm_f2_brand_new(NumericMatrix Geno, NumericVector rf, int verbose) {
 	/* calculate gamma = log Pr(v1, v2, O) */
 	for(v=0, s=0.0; v<n_gen; v++) {
 	  for(v2=0; v2<n_gen; v2++) {
-	    gamma(v,v2) = alpha(v,j) * beta(v2,j+1) *
-	      em(Geno(j+1,i)-1, v2)*
-	      tr(v, j*n_gen+v2);
-
+	    if(em(Geno(j+1,i)-1, v2) > 0)
+	      gamma(v,v2) = alpha(v,j) * beta(v2,j+1) * em(Geno(j+1,i)-1, v2)* tr(v, j*n_gen+v2);
 	    if(v==0 && v2==0) s = gamma(v,v2);
 	    else s = s + gamma(v,v2);
 	  }

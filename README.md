@@ -90,13 +90,13 @@ dat.out                                                                         
 ##     No. individuals:    5000 
 ##     No. markers:        100 
 ##     Segregation types:
-##        1:	6
-##        2:	18
-##        3:	10
-##        4:	20
-##        5:	11
-##        6:	20
-##        7:	15
+##        1:	16
+##        2:	9
+##        3:	14
+##        4:	17
+##        5:	15
+##        6:	15
+##        7:	14
 ```
 
 Obtaining recombination fractions (under the diagonal) and LOD Scores (above the diagonal). To obtain the recombination fractions and its heat maps I used just the lower triangle. 
@@ -111,9 +111,9 @@ z.out<-system.time(y.out<-est_rf_out(x=dat.out$geno, segreg_type =  dat.out$segr
 mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
 
 layout(matrix(1:3, ncol=3))
-image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3), main="Backcross" )
-image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3), main="F2")
-image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
+image(mat.bc, axes=FALSE, col=terrain.colors(500), main="Backcross" )
+image(mat.f2, axes=FALSE, col=terrain.colors(500), main="F2")
+image(mat.out, axes=FALSE, col=terrain.colors(500), main="Outcross")
 ```
 
 ![](README_files/figure-html/unnamed-chunk-3-1.png) 
@@ -154,7 +154,7 @@ system.time(bins.bc<-find.bins(dat.bc,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   0.271   0.004   0.275
+##   0.436   0.011   0.456
 ```
 
 ```r
@@ -165,8 +165,8 @@ bins.bc
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       431 
-##     Average of markers per bin:              11.601 
+##     No. of bins found:                       428 
+##     Average of markers per bin:              11.68224 
 ##     Type of search performed:                non exact
 ```
 
@@ -178,11 +178,11 @@ dat.bc.new
 ```
 ## This is an object of class 'bc.onemap'
 ##     No. individuals:     250 
-##     No. markers:         431 
-##     Percent genotyped:   92 
+##     No. markers:         428 
+##     Percent genotyped:   93 
 ## 
 ##     Number of markers per type:
-##        AA : AB --> 431 marker(s)
+##        AA : AB --> 428 marker(s)
 ## 
 ## This data contains no phenotypic information
 ```
@@ -213,7 +213,7 @@ system.time(bins.f2<-find.bins(dat.f2,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   1.613   0.000   1.611
+##   1.966   0.006   1.968
 ```
 
 ```r
@@ -224,8 +224,8 @@ bins.f2
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       1365 
-##     Average of markers per bin:              3.663 
+##     No. of bins found:                       1350 
+##     Average of markers per bin:              3.703704 
 ##     Type of search performed:                non exact
 ```
 
@@ -237,13 +237,13 @@ dat.f2.new
 ```
 ## This is an object of class 'f2.onemap'
 ##     No. individuals:     250 
-##     No. markers:         1365 
+##     No. markers:         1350 
 ##     Percent genotyped:   91 
 ## 
 ##     Number of markers per type:
-##        AA : AB : BB -->  644
-##         Not BB : BB -->  358
-##         Not AA : AA -->  363
+##        AA : AB : BB -->  639
+##         Not BB : BB -->  338
+##         Not AA : AA -->  373
 ## 
 ## This data contains no phenotypic information
 ```
@@ -259,13 +259,13 @@ dat.out
 ##     No. individuals:    250 
 ##     No. markers:        5000 
 ##     Segregation types:
-##        1:	758
-##        2:	769
-##        3:	686
-##        4:	724
-##        5:	686
-##        6:	663
-##        7:	714
+##        1:	740
+##        2:	716
+##        3:	709
+##        4:	744
+##        5:	727
+##        6:	675
+##        7:	689
 ```
 
 ```r
@@ -274,7 +274,7 @@ system.time(bins.out<-find.bins(dat.out,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   4.364   0.015   4.381
+##   5.576   0.006   5.596
 ```
 
 ```r
@@ -285,8 +285,8 @@ bins.out
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       2275 
-##     Average of markers per bin:              2.1978 
+##     No. of bins found:                       2347 
+##     Average of markers per bin:              2.130379 
 ##     Type of search performed:                non exact
 ```
 
@@ -298,15 +298,15 @@ dat.out.new
 ```
 ## This is an object of class 'outcross'
 ##     No. individuals:    250 
-##     No. markers:        2275 
+##     No. markers:        2347 
 ##     Segregation types:
-##        1:	403
-##        2:	367
-##        3:	324
-##        4:	387
+##        1:	408
+##        2:	352
+##        3:	353
+##        4:	405
 ##        5:	280
-##        6:	255
-##        7:	259
+##        6:	276
+##        7:	273
 ```
 
 Estimating the recombination fraction between all markers for each population 
@@ -318,7 +318,7 @@ dat.bc.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 431
+## [1] 428
 ```
 
 ```r
@@ -327,7 +327,7 @@ dat.bc.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##   0.216   0.000   0.215
+##   0.255   0.012   0.265
 ```
 
 ```r
@@ -337,7 +337,7 @@ dat.f2.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 1365
+## [1] 1350
 ```
 
 ```r
@@ -346,7 +346,7 @@ dat.f2.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##   6.273   0.018   6.291
+##   7.363   0.058   7.425
 ```
 
 ```r
@@ -356,7 +356,7 @@ dat.out.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 2275
+## [1] 2347
 ```
 
 ```r
@@ -365,7 +365,7 @@ dat.out.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##  15.915   0.027  15.949
+##  19.262   0.048  19.359
 ```
 
 ```r
@@ -397,7 +397,66 @@ Notice that, in this case, the f2 procedure is less efficient than the outcross.
 
 ##Next steps
 
-1. Implement these codes in OneMap - work in progress.
-2. Try to use some level of parallelizarion - work in progress.
+1. Implement these codes in OneMap.
+2. Try to use some level of parallelizarion
 3. Adjust the codes and the objects (create classes, methods, etc) and see if works fine with the previous version of OneMap
 
+##Fast HMM codes
+
+
+```r
+require(onemap)
+require(Rcpp)
+source("simulate_diploid_populations.R")
+n.ind<-250 # 250 individuals
+n.mrk<-100 # 5000 markers
+n.ch<-1
+n.mrk.per.ch<-n.mrk/n.ch
+ch.len<-200 # 200 cM chromosome
+mis<-0 #10% of missing data
+dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 1, dom51 = 1, missing = mis, n.ch = n.ch, verbose = FALSE)
+
+sourceCpp("misc/hmm_f2_old.cpp")
+sourceCpp("cpp/hmm_f2.cpp")
+
+m<-ceiling(seq(10,300, length.out = 10))
+tm.old<-tm.new<-NULL
+
+for(i in m)
+{
+  print(i)
+  dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = i, ch.len = ch.len, dom43 = 1, dom51 = 0, missing = mis, n.ch = n.ch, verbose = FALSE)
+  geno<-t(dat.f2$geno)
+  tm.old<-c(tm.old, system.time(z<-est_hmm_f2_old(Geno = geno, rf = rep(0.1, (i-1)), 1))[3]) 
+  tm.new<-c(tm.new, system.time(z1<-est_hmm_f2(Geno = geno, rf = rep(0.1, (i-1)), 1))[3])
+}
+```
+
+```
+## [1] 10
+## [1] 43
+## [1] 75
+## [1] 107
+## [1] 139
+## [1] 172
+## [1] 204
+## [1] 236
+## [1] 268
+## [1] 300
+```
+
+Hidden Markov model performance
+
+
+```r
+plot(x=m, y=tm.old, type="l", col=2, lwd=2, ylim=c(0,max(tm.old)),  xlab = "number of markers", ylab = "time in seconds", axes=FALSE)
+lines(x=m, y=tm.new, type="l", col="orange", lwd=2)
+axis(1, at=m, las=2)
+axis(2)
+text(x = m, y = tm.new+2, labels = round(tm.old/tm.new,1), cex=.7, col="blue")
+legend("topleft", legend = c("Old Algorithm (A)","New Alagorithm (B)", "How many times B in faster than A"),
+       lty = c(1,1), xjust = 1, yjust = 1,
+        col=c("red", "orange", "blue"), cex=.7)
+```
+
+![](README_files/figure-html/unnamed-chunk-9-1.png) 

@@ -14,7 +14,7 @@ First, let us load the **Rcpp** package, some C++ functions:
 ```{r}
 require(Rcpp)
 require(onemap)
-sourceCpp("twopt_est_out.cpp")
+sourceCpp("cpp/twopt_est_out.cpp")
 sourceCpp("cpp/twopt_est_f2.cpp")
 sourceCpp("cpp/twopt_est_bc.cpp")
 ```
@@ -50,9 +50,9 @@ z.out<-system.time(y.out<-est_rf_out(x=dat.out$geno, segreg_type =  dat.out$segr
 mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
 
 layout(matrix(1:3, ncol=3))
-image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3), main="Backcross" )
-image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3), main="F2")
-image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
+image(mat.bc, axes=FALSE, col=terrain.colors(500), main="Backcross" )
+image(mat.f2, axes=FALSE, col=terrain.colors(500), main="F2")
+image(mat.out, axes=FALSE, col=terrain.colors(500), main="Outcross")
 
 ```
 
@@ -112,11 +112,11 @@ mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
 ```
 
 ```{r, echo=FALSE}
-image(mat.bc, axes=FALSE, col=rainbow(n=500, start=min(mat.bc,na.rm=TRUE)*1.3, end=max(mat.bc,na.rm=TRUE)*1.3), main="Backcross" )
+image(mat.bc, axes=FALSE, col=terrain.colors(500),main="Backcross" )
 mtext(paste0("Number of pairs: ", choose(dat.bc.new$n.mar,2),   "      Elespsed time: ", round(z.bc[3],3), " seconds"), cex = .85)
-image(mat.f2, axes=FALSE, col=rainbow(n=500, start=min(mat.f2,na.rm=TRUE)*1.3, end=max(mat.f2,na.rm=TRUE)*1.3), main="F2")
+image(mat.f2, axes=FALSE, col=terrain.colors(500), main="F2")
 mtext(paste0("Number of pairs: ", choose(dat.f2.new$n.mar,2),   "      Elespsed time: ", round(z.f2[3],3), " seconds"), cex = .85)
-image(mat.out, axes=FALSE, col=rainbow(n=500, start=min(mat.out,na.rm=TRUE)*1.3, end=max(mat.out,na.rm=TRUE)*1.3), main="Outcross")
+image(mat.out, axes=FALSE, col=terrain.colors(500), main="Outcross")
 mtext(paste0("Number of pairs: ", choose(dat.out.new$n.mar,2),   "      Elespsed time: ", round(z.out[3],3), " seconds"), cex = .85)
 ```
 
@@ -147,6 +147,7 @@ Notice that, in this case, the f2 procedure is less efficient than the outcross.
 ##Fast HMM codes
 
 ```{r}
+require(onemap)
 require(Rcpp)
 source("simulate_diploid_populations.R")
 n.ind<-250 # 250 individuals
@@ -155,17 +156,33 @@ n.ch<-1
 n.mrk.per.ch<-n.mrk/n.ch
 ch.len<-200 # 200 cM chromosome
 mis<-0 #10% of missing data
-dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 30, dom51 = 1, missing = mis, n.ch = n.ch, verbose = FALSE)
+dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 1, dom51 = 1, missing = mis, n.ch = n.ch, verbose = FALSE)
 
-
-sourceCpp("cpp/hmm_f2_old.cpp")
+sourceCpp("misc/hmm_f2_old.cpp")
 sourceCpp("cpp/hmm_f2.cpp")
-sourceCpp("cpp/hmm_f2_new.cpp")
-sourceCpp("cpp/hmm_f2_brand_new.cpp")
 
-system.time(z0<-est_hmm_f2_old(Geno = t(dat.f2$geno), rf = rep(0.05, (n.mrk-1)),1))
-system.time(z1<-est_hmm_f2(Geno = t(dat.f2$geno), rf = rep(0.05, (n.mrk-1)),1))
-system.time(z2<-est_hmm_f2_new(Geno = t(dat.f2$geno), rf = rep(0.05, (n.mrk-1)),1))
-system.time(z3<-est_hmm_f2_brand_new(Geno = t(dat.f2$geno), rf = rep(0.05, (n.mrk-1)),1))
+m<-ceiling(seq(10,300, length.out = 10))
+tm.old<-tm.new<-NULL
+
+for(i in m)
+{
+  print(i)
+  dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = i, ch.len = ch.len, dom43 = 1, dom51 = 0, missing = mis, n.ch = n.ch, verbose = FALSE)
+  geno<-t(dat.f2$geno)
+  tm.old<-c(tm.old, system.time(z<-est_hmm_f2_old(Geno = geno, rf = rep(0.1, (i-1)), 1))[3]) 
+  tm.new<-c(tm.new, system.time(z1<-est_hmm_f2(Geno = geno, rf = rep(0.1, (i-1)), 1))[3])
+}
 ```
 
+Hidden Markov model performance
+
+```{r}
+plot(x=m, y=tm.old, type="l", col=2, lwd=2, ylim=c(0,max(tm.old)),  xlab = "number of markers", ylab = "time in seconds", axes=FALSE)
+lines(x=m, y=tm.new, type="l", col="orange", lwd=2)
+axis(1, at=m, las=2)
+axis(2)
+text(x = m, y = tm.new+2, labels = round(tm.old/tm.new,1), cex=.7, col="blue")
+legend("topleft", legend = c("Old Algorithm (A)","New Alagorithm (B)", "How many times B in faster than A"),
+       lty = c(1,1), xjust = 1, yjust = 1,
+        col=c("red", "orange", "blue"), cex=.7)
+```
