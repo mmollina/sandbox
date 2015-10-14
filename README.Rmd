@@ -182,7 +182,7 @@ lines(x=m, y=tm.new, type="l", col="orange", lwd=2)
 axis(1, at=m, las=2)
 axis(2)
 text(x = m, y = tm.new+2, labels = round(tm.old/tm.new,1), cex=.7, col="blue")
-legend("topleft", legend = c("Old Algorithm (A)","New Alagorithm (B)", "How many times B in faster than A"),
+legend("topleft", legend = c("Old Algorithm (A)","New Alagorithm (B)", "How many times B is faster than A"),
        lty = c(1,1), xjust = 1, yjust = 1,
         col=c("red", "orange", "blue"), cex=.7)
 ```
