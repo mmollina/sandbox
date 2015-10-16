@@ -161,6 +161,14 @@ dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 1, dom
 sourceCpp("misc/hmm_f2_old.cpp")
 sourceCpp("cpp/hmm_f2.cpp")
 
+
+  geno<-t(dat.f2$geno)
+  dim(geno)
+system.time(z<-est_hmm_f2_old(Geno = geno, rf = rep(0.1, 99), 1)) 
+system.time(z<-est_hmm_f2(Geno = geno, rf = rep(0.1, 99), 1)) 
+
+
+
 m<-ceiling(seq(10,300, length.out = 10))
 tm.old<-tm.new<-NULL
 
