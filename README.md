@@ -86,17 +86,18 @@ dat.out                                                                         
 ```
 
 ```
-## This is an object of class 'outcross'
+##   This is an object of class 'outcross'
 ##     No. individuals:    5000 
 ##     No. markers:        100 
 ##     Segregation types:
-##        1:	11
-##        2:	14
-##        3:	13
-##        4:	17
-##        5:	14
-##        6:	11
-##        7:	20
+##        1:	22
+##        2:	11
+##        3:	14
+##        4:	15
+##        5:	9
+##        6:	14
+##        7:	15
+##     No. traits:         0
 ```
 
 Obtaining recombination fractions (under the diagonal) and LOD Scores (above the diagonal). To obtain the recombination fractions and its heat maps I used just the lower triangle. 
@@ -110,10 +111,45 @@ mat.f2<-as.matrix(as.dist(y.f2, upper = TRUE))
 z.out<-system.time(y.out<-est_rf_out(x=dat.out$geno, segreg_type =  dat.out$segr.type.num, n = dat.out$n.ind))
 mat.out<-as.matrix(as.dist(y.out[[1]], upper = TRUE))
 
+require(fields)
+```
+
+```
+## Loading required package: fields
+## Loading required package: spam
+## Loading required package: grid
+## Spam version 1.2-1 (2015-09-30) is loaded.
+## Type 'help( Spam)' or 'demo( spam)' for a short introduction 
+## and overview of this package.
+## Help for individual functions is also obtained by adding the
+## suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
+## 
+## Attaching package: 'spam'
+## 
+## The following objects are masked from 'package:base':
+## 
+##     backsolve, forwardsolve
+## 
+## Loading required package: maps
+## 
+##  # ATTENTION: maps v3.0 has an updated 'world' map.        #
+##  # Many country borders and names have changed since 1990. #
+##  # Type '?world' or 'news(package="maps")'. See README_v3. #
+## 
+## 
+## 
+## Attaching package: 'maps'
+## 
+## The following object is masked from 'package:onemap':
+## 
+##     map
+```
+
+```r
 layout(matrix(1:3, ncol=3))
-image(mat.bc, axes=FALSE, col=terrain.colors(500), main="Backcross" )
-image(mat.f2, axes=FALSE, col=terrain.colors(500), main="F2")
-image(mat.out, axes=FALSE, col=terrain.colors(500), main="Outcross")
+image.plot(mat.bc, axes=FALSE, col = rev(tim.colors()), main="Backcross" )
+image.plot(mat.f2, axes=FALSE, col = rev(tim.colors()), main="F2")
+image.plot(mat.out, axes=FALSE, col =  rev(tim.colors()), main="Outcross")
 ```
 
 ![](README_files/figure-html/unnamed-chunk-3-1.png) 
@@ -154,7 +190,7 @@ system.time(bins.bc<-find.bins(dat.bc,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   0.266   0.003   0.270
+##   0.319   0.000   0.317
 ```
 
 ```r
@@ -165,8 +201,8 @@ bins.bc
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       424 
-##     Average of markers per bin:              11.79245 
+##     No. of bins found:                       466 
+##     Average of markers per bin:              10.72961 
 ##     Type of search performed:                non exact
 ```
 
@@ -178,11 +214,11 @@ dat.bc.new
 ```
 ## This is an object of class 'bc.onemap'
 ##     No. individuals:     250 
-##     No. markers:         424 
+##     No. markers:         466 
 ##     Percent genotyped:   92 
 ## 
 ##     Number of markers per type:
-##        AA : AB --> 424 marker(s)
+##        AA : AB --> 466 marker(s)
 ## 
 ## This data contains no phenotypic information
 ```
@@ -213,7 +249,7 @@ system.time(bins.f2<-find.bins(dat.f2,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   1.647   0.002   1.649
+##   1.581   0.015   1.595
 ```
 
 ```r
@@ -224,8 +260,8 @@ bins.f2
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       1306 
-##     Average of markers per bin:              3.828484 
+##     No. of bins found:                       1319 
+##     Average of markers per bin:              3.790751 
 ##     Type of search performed:                non exact
 ```
 
@@ -237,13 +273,13 @@ dat.f2.new
 ```
 ## This is an object of class 'f2.onemap'
 ##     No. individuals:     250 
-##     No. markers:         1306 
+##     No. markers:         1319 
 ##     Percent genotyped:   91 
 ## 
 ##     Number of markers per type:
-##        AA : AB : BB -->  628
-##         Not BB : BB -->  353
-##         Not AA : AA -->  325
+##        AA : AB : BB -->  635
+##         Not BB : BB -->  332
+##         Not AA : AA -->  352
 ## 
 ## This data contains no phenotypic information
 ```
@@ -255,17 +291,18 @@ dat.out
 ```
 
 ```
-## This is an object of class 'outcross'
+##   This is an object of class 'outcross'
 ##     No. individuals:    250 
 ##     No. markers:        5000 
 ##     Segregation types:
-##        1:	735
-##        2:	733
-##        3:	706
-##        4:	728
-##        5:	684
-##        6:	717
-##        7:	697
+##        1:	741
+##        2:	704
+##        3:	735
+##        4:	743
+##        5:	682
+##        6:	712
+##        7:	683
+##     No. traits:         0
 ```
 
 ```r
@@ -274,7 +311,7 @@ system.time(bins.out<-find.bins(dat.out,exact = FALSE))
 
 ```
 ##    user  system elapsed 
-##   4.735   0.000   4.731
+##   4.794   0.000   4.794
 ```
 
 ```r
@@ -285,8 +322,8 @@ bins.out
 ## This is an object of class 'onemap.bin'
 ##     No. individuals:                         250 
 ##     No. markers in original dataset:         5000 
-##     No. of bins found:                       2350 
-##     Average of markers per bin:              2.12766 
+##     No. of bins found:                       2365 
+##     Average of markers per bin:              2.114165 
 ##     Type of search performed:                non exact
 ```
 
@@ -296,17 +333,18 @@ dat.out.new
 ```
 
 ```
-## This is an object of class 'outcross'
+##   This is an object of class 'outcross'
 ##     No. individuals:    250 
-##     No. markers:        2350 
+##     No. markers:        2365 
 ##     Segregation types:
-##        1:	413
-##        2:	368
-##        3:	345
+##        1:	411
+##        2:	337
+##        3:	366
 ##        4:	414
-##        5:	266
-##        6:	275
-##        7:	269
+##        5:	272
+##        6:	281
+##        7:	284
+##     No. traits:         0
 ```
 
 Estimating the recombination fraction between all markers for each population 
@@ -318,7 +356,7 @@ dat.bc.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 424
+## [1] 466
 ```
 
 ```r
@@ -327,7 +365,7 @@ dat.bc.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##   0.228   0.012   0.243
+##   0.304   0.004   0.307
 ```
 
 ```r
@@ -337,7 +375,7 @@ dat.f2.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 1306
+## [1] 1319
 ```
 
 ```r
@@ -346,7 +384,7 @@ dat.f2.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##   6.024   0.003   6.022
+##   5.930   0.027   5.953
 ```
 
 ```r
@@ -356,7 +394,7 @@ dat.out.new$n.mar ##Number of markers
 ```
 
 ```
-## [1] 2350
+## [1] 2365
 ```
 
 ```r
@@ -365,7 +403,7 @@ dat.out.new$n.mar ##Number of markers
 
 ```
 ##    user  system elapsed 
-##  17.609   0.168  17.778
+##  17.231   0.088  17.315
 ```
 
 ```r
@@ -419,6 +457,34 @@ dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 1, dom
 sourceCpp("misc/hmm_f2_old.cpp")
 sourceCpp("cpp/hmm_f2.cpp")
 
+
+  geno<-t(dat.f2$geno)
+  dim(geno)
+```
+
+```
+## [1] 100 250
+```
+
+```r
+system.time(z<-est_hmm_f2_old(Geno = geno, rf = rep(0.1, 99), 1)) 
+```
+
+```
+##    user  system elapsed 
+##   5.077   0.062   5.123
+```
+
+```r
+system.time(z<-est_hmm_f2(Geno = geno, rf = rep(0.1, 99), 1)) 
+```
+
+```
+##    user  system elapsed 
+##   0.232   0.049   0.264
+```
+
+```r
 m<-ceiling(seq(10,300, length.out = 10))
 tm.old<-tm.new<-NULL
 

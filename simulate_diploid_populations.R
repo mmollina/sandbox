@@ -98,7 +98,7 @@ sim.pop.f2<-function(n.ind, n.mrk, ch.len, dom43=0, dom51=0, missing=0, n.ch=1, 
     code<-c(-2,-2,-3)
     structure(list(geno = dat.final, geno.mmk = dat.mmk, n.ind = n.ind, n.mar = n.mrk,
                    segr.type = NA, segr.type.num=type, phase=code[type],
-                   input="none.txt", n.phe=0, pheno = NA),  class = "f2.onemap")    
+                   input="none.txt", n.phe = 0, pheno = NA),  class = "f2.onemap")    
 }
 
 ##Simulates an Outcross population
@@ -182,5 +182,5 @@ sim.pop.out<-function(n.ind, n.mrk, ch.len, missing=0, prob=c(1,1,1,1,1,1,1), n.
     dat.final[sample(1:length(dat.final), size=length(dat.final)*missing/100)]<-0
     colnames(dat.final)<-mrk.names
     structure(list(geno = dat.final, n.ind = n.ind, n.mar = n.mrk, segr.type = as.character(type.final),
-                   segr.type.num=type.final, input="none.txt"), class = "outcross")
+                   segr.type.num=type.final, input="none.txt", n.phe=0, pheno = NA), class = "outcross")
 }
