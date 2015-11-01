@@ -1,7 +1,7 @@
 ---
 title: 'Report: Two point precedures'
 author: "Marcelo Mollinari"
-date: "October 7, 2015"
+date: "October 31, 2015"
 output: 
   html_document: 
     keep_md: yes
@@ -138,6 +138,44 @@ legend("topleft", legend = c("Outcross","F2",  "Backcross"),
 ```
 
 Notice that, in this case, the f2 procedure is less efficient than the outcross. This is caused by the dominant markers in repulsion present in the data. Since the simulation was performed with 60% of dominant markers, several them are in repulsion. In the outcross simulations, this type of configuration happens in a small proportion of the data (markers C in repulsion). This configuration is known as the worst case to estimate (low power) and the EM takes several iterations to converge.
+
+##Ordering Using Minimum Spanning Tree
+
+```{r}
+n.ind<-250 # 250 individuals
+n.mrk<-100 # 5000 markers
+n.ch<-1
+n.mrk.per.ch<-n.mrk/n.ch
+ch.len<-200 # 200 cM chromosome
+mis<-0 #10% of missing data
+##F2
+dat.f2<-sim.pop.f2(n.ind = n.ind, n.mrk = n.mrk, ch.len = ch.len, dom43 = 0, dom51 = 1, missing = mis, n.ch = n.ch, verbose = FALSE)
+dat.f2
+system.time(bins.f2<-find.bins(dat.f2,exact = FALSE))
+bins.f2
+dat.f2.new<-create.data.bins(dat.f2, bins.f2)
+dat.f2.new
+dat.f2.new$n.mar ##Number of markers
+(z.f2<-system.time(y.f2<-est_rf_f2(x=dat.f2.new$geno, type = dat.f2.new$segr.type.num, n = dat.f2$n.ind)))
+mat.f2<-as.matrix(as.dist(y.f2, upper = TRUE))
+
+require(igraph)
+v<-paste("*Vertices", dat.f2.new$n.mar)
+write(x=v,file = "test.txt")
+write(x="*Edges",file = "test.txt", append = TRUE)
+w<-t(combn(dat.f2.new$n.mar,2))
+write.table(x=w, file = "test.txt", append = TRUE, quote = FALSE, sep = " ", row.names = FALSE, col.names = FALSE)
+g<-read_graph(file="test.txt", format = "pajek")
+g
+#plot(g)
+wei<-as.numeric(as.dist(y.f2))
+system.time(a<-mst(g, weights=wei, algorithm='prim'))
+plot(a)
+tkplot(a, vertex.color="green", vertex.size=13)
+```
+
+
+
 
 ##Next steps
 
